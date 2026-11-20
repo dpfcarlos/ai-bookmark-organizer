@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bookmark Organizer</title>
+<meta name="description" content="Clean up and organize your browser bookmarks. Runs 100% in your browser: nothing is uploaded.">
+<style>
+:root {
+  --bg: #f6f7f9; --panel: #ffffff; --text: #1d2330; --muted: #667085; --line: #e3e6eb;
+  --accent: #2f6fed; --accent-soft: #e8f0fe; --danger: #c62f2f; --danger-soft: #fdecec; --ok: #1f8a4c; --hl: #fff3bf;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12151b; --panel: #1b1f27; --text: #e6e8ec; --muted: #98a2b3; --line: #2b313c;
+    --accent: #6c9cff; --accent-soft: #1f2a44; --danger: #ff7b7b; --danger-soft: #3a1f22; --ok: #5fd08f; --hl: #4a4220;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12151b; --panel: #1b1f27; --text: #e6e8ec; --muted: #98a2b3; --line: #2b313c;
+  --accent: #6c9cff; --accent-soft: #1f2a44; --danger: #ff7b7b; --danger-soft: #3a1f22; --ok: #5fd08f; --hl: #4a4220;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+header { padding: 20px 16px 8px; max-width: 1100px; margin: 0 auto; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+header h1 { font-size: 22px; margin: 0; flex: 1; }
+header .sub { width: 100%; color: var(--muted); margin: 0; font-size: 14px; }
+main { max-width: 1100px; margin: 0 auto; padding: 8px 16px 40px; }
+button, select, input[type=search] { font: inherit; color: inherit; }
+button { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 7px 12px; cursor: pointer; }
+button:hover:not(:disabled) { border-color: var(--accent); }
+button:disabled { opacity: .45; cursor: default; }
+button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+button.danger { color: var(--danger); }
+button.danger:hover:not(:disabled) { border-color: var(--danger); background: var(--danger-soft); }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin-bottom: 14px; }
+.steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.steps div { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+.steps b { display: block; margin-bottom: 4px; }
+.steps p { margin: 0; color: var(--muted); font-size: 14px; }
+#drop { border: 2px dashed var(--line); border-radius: 12px; padding: 28px 16px; text-align: center; cursor: pointer; }
+#drop.over { border-color: var(--accent); background: var(--accent-soft); }
+#drop p { margin: 6px 0 0; color: var(--muted); font-size: 14px; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; position: sticky; top: 0; z-index: 2; background: var(--bg); padding: 10px 0; }
+.toolbar input[type=search] { flex: 1 1 220px; min-width: 0; padding: 7px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); }
+.stats { color: var(--muted); font-size: 14px; margin: 4px 0 10px; }
+.tree { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 8px 4px; overflow-x: auto; }
+.tree ul { list-style: none; margin: 0; padding-left: 20px; }
+.tree > ul { padding-left: 4px; }
+.row { display: flex; align-items: center; gap: 6px; padding: 3px 6px; border-radius: 6px; min-width: 0; }
+.row:hover { background: var(--accent-soft); }
+.row.dup { background: var(--danger-soft); }
+.row.match .name { background: var(--hl); }
+.row .tw { width: 18px; text-align: center; cursor: pointer; color: var(--muted); flex: none; user-select: none; }
+.row img { width: 16px; height: 16px; flex: none; }
+.row .name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: text; }
+.row .url { color: var(--muted); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 1; }
+.row .count { color: var(--muted); font-size: 13px; }
+.row input[type=checkbox] { flex: none; margin: 0; }
+li.closed > ul { display: none; }
+.hidden { display: none !important; }
+.note { font-size: 14px; color: var(--muted); }
+.note code { background: var(--accent-soft); padding: 1px 5px; border-radius: 4px; }
+details summary { cursor: pointer; font-weight: 600; }
+#toast { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); background: var(--text); color: var(--bg); padding: 10px 16px; border-radius: 8px; opacity: 0; transition: opacity .2s; pointer-events: none; max-width: calc(100% - 32px); }
+#toast.show { opacity: 1; }
+footer { text-align: center; color: var(--muted); font-size: 13px; padding: 20px 16px; }
+footer a { color: var(--accent); }
+@media (max-width: 600px) { .row .url { display: none; } }
+</style>
+</head>
+<body>
+<header>
+  <h1 data-i18n="title">Bookmark Organizer</h1>
+  <select id="lang" aria-label="Language">
+    <option value="en">English</option>
+    <option value="pt">Português</option>
+  </select>
+  <p class="sub" data-i18n="subtitle">Clean up and organize your browser bookmarks. Everything runs in this page: your bookmarks are never uploaded.</p>
+</header>
+
+<main>
+  <section class="steps">
+    <div><b data-i18n="s1t">1. Export</b><p data-i18n="s1">In your browser, open the bookmarks manager and export them to an .html file.</p></div>
+    <div><b data-i18n="s2t">2. Organize here</b><p data-i18n="s2">Load the file, remove duplicates and dead entries, sort and rearrange.</p></div>
+    <div><b data-i18n="s3t">3. Load the clean file</b><p data-i18n="s3">Download the new file, delete the old bookmarks in the browser and import the new one.</p></div>
+  </section>
+
+  <section class="panel" style="margin-top:14px">
+    <div id="drop" tabindex="0" role="button">
+      <strong data-i18n="drop">Drop your bookmarks .html file here, or click to choose</strong>
+      <p data-i18n="drop2">You can load several files at once (for example from two browsers); they are merged.</p>
+    </div>
+    <input type="file" id="file" accept=".html,.htm" multiple hidden>
+    <details style="margin-top:12px">
+      <summary data-i18n="howExport">How do I export my bookmarks?</summary>
+      <div class="note" data-i18n-html="howExportBody"></div>
+    </details>
+  </section>
+
+  <section id="work" class="hidden">
+    <div class="toolbar">
+      <input type="search" id="q" data-i18n-ph="search" placeholder="Search name or address…">
+      <button id="bDup" data-i18n="dups">Remove duplicates</button>
+      <button id="bEmpty" data-i18n="empty">Remove empty folders</button>
+      <button id="bSort" data-i18n="sort">Sort A→Z</button>
+      <button id="bDomain" data-i18n="byDomain">Group loose links by site</button>
+      <button id="bFolder" data-i18n="newFolder">New folder</button>
+      <button id="bMove" data-i18n="move" disabled>Move selected</button>
+      <button id="bDel" class="danger" data-i18n="del" disabled>Delete selected</button>
+      <button id="bUndo" data-i18n="undo" disabled>Undo</button>
+      <button id="bExport" class="primary" data-i18n="export">Download clean file</button>
+    </div>
+    <div class="stats" id="stats"></div>
+    <div class="tree" id="tree"></div>
+    <p class="note" data-i18n="tip">Tip: double-click a name to rename it. Click the arrow to open or close a folder.</p>
+    <details class="panel" style="margin-top:14px">
+      <summary data-i18n="howImport">How do I replace the bookmarks in my browser with the clean file?</summary>
+      <div class="note" data-i18n-html="howImportBody"></div>
+    </details>
+  </section>
+</main>
+
+<footer>
+  <span data-i18n="foot">Free and open source.</span>
+  <a href="https://github.com/dpfcarlos/bookmark-organizer">GitHub</a>
+</footer>
+<div id="toast" role="status"></div>
+
+<script>
+'use strict';
+// ------------------------------------------------------------------ i18n
+const I18N = {
+  en: {},
+  pt: {
+    title: 'Organizador de Favoritos',
+    subtitle: 'Limpe e organize os favoritos do seu navegador. Tudo roda nesta página: seus favoritos nunca são enviados para lugar nenhum.',
+    s1t: '1. Exporte', s1: 'No navegador, abra o gerenciador de favoritos e exporte para um arquivo .html.',
+    s2t: '2. Organize aqui', s2: 'Carregue o arquivo, remova duplicados e itens inúteis, ordene e reorganize.',
+    s3t: '3. Carregue o arquivo limpo', s3: 'Baixe o arquivo novo, exclua os favoritos antigos no navegador e importe o novo.',
+    drop: 'Solte aqui o arquivo .html dos favoritos, ou clique para escolher',
+    drop2: 'Você pode carregar vários arquivos de uma vez (por exemplo, de dois navegadores) e eles são unidos.',
+    howExport: 'Como exportar meus favoritos?',
+    search: 'Buscar por nome ou endereço…',
+    dups: 'Remover duplicados', empty: 'Remover pastas vazias', sort: 'Ordenar A→Z', byDomain: 'Agrupar links soltos por site',
+    newFolder: 'Nova pasta', move: 'Mover selecionados', del: 'Excluir selecionados', undo: 'Desfazer', export: 'Baixar arquivo limpo',
+    tip: 'Dica: clique duas vezes em um nome para renomear. Clique na seta para abrir ou fechar uma pasta.',
+    howImport: 'Como trocar os favoritos do navegador pelo arquivo limpo?',
+    foot: 'Gratuito e de código aberto.',
+    stats: (u, f, d) => `${u} favoritos, ${f} pastas` + (d ? `, ${d} cópias duplicadas (em vermelho)` : ''),
+    selected: (n) => `${n} selecionado(s)`,
+    removedDups: (n) => n ? `${n} duplicado(s) removido(s)` : 'Nenhum duplicado encontrado',
+    removedEmpty: (n) => n ? `${n} pasta(s) vazia(s) removida(s)` : 'Nenhuma pasta vazia',
+    sorted: 'Tudo ordenado (pastas primeiro)',
+    grouped: (n) => n ? `${n} link(s) agrupado(s) por site` : 'Nenhum site com 2 ou mais links soltos',
+    confirmDel: (n) => `Excluir ${n} item(ns)? Pastas são excluídas com tudo o que há dentro.`,
+    askFolder: 'Nome da nova pasta:',
+    askMove: (list) => `Mover para qual pasta? Digite o número:\n\n${list}`,
+    moved: (n) => `${n} item(ns) movido(s)`,
+    loaded: (u) => `${u} favoritos carregados`,
+    noBookmarks: 'Esse arquivo não tem favoritos. Confira se é a exportação em HTML do navegador.',
+    undone: 'Desfeito', downloaded: 'Arquivo baixado',
+    bar: 'Barra de favoritos', other: 'Outros favoritos', sites: 'Sites',
+  },
+};
+const EN = {
+  howExportBody: `<p><b>Chrome / Edge / Brave / Opera / Vivaldi:</b> press <code>Ctrl+Shift+O</code> (Mac: <code>Cmd+Option+B</code>), click the ⋮ menu at the top right of the bookmarks page and choose <i>Export bookmarks</i>.</p><p><b>Firefox:</b> press <code>Ctrl+Shift+O</code>, then <i>Import and Backup → Export Bookmarks to HTML</i>.</p><p><b>Safari:</b> <i>File → Export → Bookmarks</i>.</p>`,
+  howImportBody: `<ol><li>Keep the original export somewhere safe: it is your backup.</li><li>If you use sync, the deletion below also applies to your other devices, which is usually what you want.</li><li>In the bookmarks manager (<code>Ctrl+Shift+O</code>), click any item, press <code>Ctrl+A</code> and then <code>Delete</code>. Do it in the bookmarks bar and in <i>Other bookmarks</i>.</li><li>Open the ⋮ menu and choose <i>Import bookmarks</i>, then select the clean file. Chrome places it in a folder called "Imported"; just drag its contents to the bookmarks bar.</li><li>In Firefox use <i>Import and Backup → Import Bookmarks from HTML</i>.</li></ol>`,
+  stats: (u, f, d) => `${u} bookmarks, ${f} folders` + (d ? `, ${d} duplicate copies (in red)` : ''),
+  selected: (n) => `${n} selected`,
+  removedDups: (n) => n ? `${n} duplicate(s) removed` : 'No duplicates found',
+  removedEmpty: (n) => n ? `${n} empty folder(s) removed` : 'No empty folders',
+  sorted: 'Everything sorted (folders first)',
+  grouped: (n) => n ? `${n} link(s) grouped by site` : 'No site has 2 or more loose links',
+  confirmDel: (n) => `Delete ${n} item(s)? Folders are deleted with everything inside.`,
+  askFolder: 'Name of the new folder:',
+  askMove: (list) => `Move to which folder? Type the number:\n\n${list}`,
+  moved: (n) => `${n} item(s) moved`,
+  loaded: (u) => `${u} bookmarks loaded`,
+  noBookmarks: 'This file has no bookmarks. Check that it is the browser HTML export.',
+  undone: 'Undone', downloaded: 'File downloaded',
+  bar: 'Bookmarks bar', other: 'Other bookmarks', sites: 'Sites',
+};
+I18N.pt.howExportBody = `<p><b>Chrome / Edge / Brave / Opera / Vivaldi:</b> aperte <code>Ctrl+Shift+O</code> (Mac: <code>Cmd+Option+B</code>), clique no menu ⋮ no alto à direita da página de favoritos e escolha <i>Exportar favoritos</i>.</p><p><b>Firefox:</b> aperte <code>Ctrl+Shift+O</code> e depois <i>Importar e backup → Exportar favoritos para HTML</i>.</p><p><b>Safari:</b> <i>Arquivo → Exportar → Favoritos</i>.</p>`;
+I18N.pt.howImportBody = `<ol><li>Guarde a exportação original em um lugar seguro, pois ela é o seu backup.</li><li>Se você usa sincronização, a exclusão abaixo também vale para os outros aparelhos, o que normalmente é o desejado.</li><li>No gerenciador de favoritos (<code>Ctrl+Shift+O</code>), clique em qualquer item, aperte <code>Ctrl+A</code> e depois <code>Delete</code>. Faça isso na barra de favoritos e em <i>Outros favoritos</i>.</li><li>Abra o menu ⋮, escolha <i>Importar favoritos</i> e selecione o arquivo limpo. O Chrome coloca tudo em uma pasta chamada "Importados"; basta arrastar o conteúdo dela para a barra de favoritos.</li><li>No Firefox use <i>Importar e backup → Importar favoritos de HTML</i>.</li></ol>`;
+
+let lang = 'en';
+try { lang = localStorage.getItem('bo-lang') || ''; } catch {}
+if (!lang) lang = (navigator.language || '').toLowerCase().startsWith('pt') ? 'pt' : 'en';
+const T = (k, ...a) => { const v = (lang === 'pt' ? I18N.pt[k] : undefined) ?? EN[k]; return typeof v === 'function' ? v(...a) : v; };
+const original = {};
+function applyLang() {
+  document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'en';
+  document.getElementById('lang').value = lang;
+  document.querySelectorAll('[data-i18n]').forEach((el) => {
+    const k = el.dataset.i18n; original[k] ??= el.textContent;
+    el.textContent = lang === 'pt' && I18N.pt[k] ? I18N.pt[k] : original[k];
+  });
+  document.querySelectorAll('[data-i18n-ph]').forEach((el) => {
+    const k = el.dataset.i18nPh; original['ph_' + k] ??= el.placeholder;
+    el.placeholder = lang === 'pt' && I18N.pt[k] ? I18N.pt[k] : original['ph_' + k];
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach((el) => { el.innerHTML = T(el.dataset.i18nHtml); });
+  document.title = T('title') || 'Bookmark Organizer';
+  if (root) render();
+}
+document.getElementById('lang').onchange = (e) => { lang = e.target.value; try { localStorage.setItem('bo-lang', lang); } catch {} applyLang(); };
+
+// ------------------------------------------------------------- model / parse
+let root = null;           // { type:'folder', name, children, toolbar? }
+let uid = 1;
+const history = [];
+const selected = new Set();
+const closed = new Set();
+
+function decode(s) { const t = document.createElement('textarea'); t.innerHTML = s; return t.value; }
+function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+function parse(html) {
+  const top = { type: 'folder', name: 'root', children: [], id: uid++ };
+  const stack = [top]; let pending = null; let m;
+  const re = /<DT>\s*<H3([^>]*)>([\s\S]*?)<\/H3>|<DT>\s*<A([^>]*)>([\s\S]*?)<\/A>|<DL[^>]*>|<\/DL>/gi;
+  const attr = (a, n) => { const r = a.match(new RegExp(n + '\\s*=\\s*"([^"]*)"', 'i')); return r ? decode(r[1]) : undefined; };
+  while ((m = re.exec(html))) {
+    const cur = stack[stack.length - 1];
+    if (m[1] !== undefined) {
+      pending = { type: 'folder', id: uid++, name: decode(m[2].replace(/<[^>]+>/g, '').trim()), addDate: attr(m[1], 'ADD_DATE'), toolbar: /PERSONAL_TOOLBAR_FOLDER\s*=\s*"true"/i.test(m[1]), children: [] };
+      cur.children.push(pending);
+    } else if (m[3] !== undefined) {
+      const url = attr(m[3], 'HREF'); if (!url) continue;
+      cur.children.push({ type: 'url', id: uid++, url, name: decode(m[4].replace(/<[^>]+>/g, '').trim()) || url, addDate: attr(m[3], 'ADD_DATE'), icon: attr(m[3], 'ICON') });
+    } else if (/^<DL/i.test(m[0])) { if (pending) { stack.push(pending); pending = null; } }
+    else if (stack.length > 1) stack.pop();
+  }
+  return top;
+}
+
+function generate(node) {
+  const now = Math.floor(Date.now() / 1000);
+  const out = ['<!DOCTYPE NETSCAPE-Bookmark-file-1>', '<!-- This is an automatically generated file.', '     It will be read and overwritten.', '     DO NOT EDIT! -->', '<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">', '<TITLE>Bookmarks</TITLE>', '<H1>Bookmarks</H1>', '<DL><p>'];
+  const emit = (n, d) => {
+    const pad = '    '.repeat(d);
+    if (n.type === 'url') { out.push(`${pad}<DT><A HREF="${esc(n.url)}" ADD_DATE="${n.addDate || now}"${n.icon ? ` ICON="${esc(n.icon)}"` : ''}>${esc(n.name)}</A>`); return; }
+    out.push(`${pad}<DT><H3 ADD_DATE="${n.addDate || now}" LAST_MODIFIED="${now}"${n.toolbar ? ' PERSONAL_TOOLBAR_FOLDER="true"' : ''}>${esc(n.name)}</H3>`, `${pad}<DL><p>`);
+    n.children.forEach((c) => emit(c, d + 1));
+    out.push(`${pad}</DL><p>`);
+  };
+  node.children.forEach((c) => emit(c, 1));
+  out.push('</DL><p>');
+  return out.join('\n') + '\n';
+}
+
+function norm(url) {
+  try {
+    const u = new URL(url); u.hash = '';
+    const params = [...u.searchParams.entries()].filter(([k]) => !/^utm_|^fbclid$|^gclid$/i.test(k)).sort(([a], [b]) => a.localeCompare(b));
+    return `${u.protocol === 'http:' ? 'https:' : u.protocol}//${u.hostname.toLowerCase().replace(/^www\./, '')}${u.port ? ':' + u.port : ''}${u.pathname.replace(/\/+$/, '')}${params.length ? '?' + params.map((p) => p.join('=')).join('&') : ''}`;
+  } catch { return String(url).trim().toLowerCase(); }
+}
+function host(url) { try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return ''; } }
+function walk(n, fn, parent = null) { fn(n, parent); if (n.children) [...n.children].forEach((c) => walk(c, fn, n)); }
+function counts(n) { let u = 0, f = 0; walk(n, (x) => { if (x === n) return; x.type === 'url' ? u++ : f++; }); return { u, f }; }
+function findParent(id) { let p = null; walk(root, (x, par) => { if (x.id === id) p = par; }); return p; }
+function findNode(id) { let r = null; walk(root, (x) => { if (x.id === id) r = x; }); return r; }
+
+function snapshot() { history.push(JSON.stringify(root)); if (history.length > 30) history.shift(); }
+function undo() { if (!history.length) return; root = JSON.parse(history.pop()); selected.clear(); render(); toast(T('undone')); }
+
+// Merges a freshly parsed file into the current tree (folders with the same name are merged).
+function merge(target, src) {
+  for (const c of src.children) {
+    if (c.type === 'folder') {
+      const same = target.children.find((x) => x.type === 'folder' && x.name.toLowerCase() === c.name.toLowerCase());
+      if (same) { same.toolbar ||= c.toolbar; merge(same, c); } else target.children.push(c);
+    } else target.children.push(c);
+  }
+}
+
+// ------------------------------------------------------------------ actions
+function removeDuplicates() {
+  snapshot(); const seen = new Set(); let n = 0;
+  walk(root, (x, p) => { if (x.type !== 'url') return; const k = norm(x.url); if (seen.has(k)) { p.children.splice(p.children.indexOf(x), 1); n++; } else seen.add(k); });
+  render(); toast(T('removedDups', n));
+}
+function removeEmpty() {
+  snapshot(); let n = 0;
+  const prune = (f) => { f.children = f.children.filter((c) => { if (c.type !== 'folder') return true; prune(c); if (!c.children.length && !c.toolbar) { n++; return false; } return true; }); };
+  prune(root); render(); toast(T('removedEmpty', n));
+}
+function sortAll() {
+  snapshot(); const coll = new Intl.Collator(undefined, { sensitivity: 'base', numeric: true });
+  walk(root, (x) => { if (x.type === 'folder' && x !== root) x.children.sort((a, b) => a.type !== b.type ? (a.type === 'folder' ? -1 : 1) : coll.compare(a.name, b.name)); });
+  render(); toast(T('sorted'));
+}
+function groupByDomain() {
+  // Loose links = links sitting directly in a top-level folder (bookmarks bar, other bookmarks).
+  snapshot(); let moved = 0;
+  for (const top of root.children.filter((c) => c.type === 'folder')) {
+    const groups = {};
+    top.children.filter((c) => c.type === 'url').forEach((c) => { const h = host(c.url); if (h) (groups[h] ||= []).push(c); });
+    const hosts = Object.keys(groups).filter((h) => groups[h].length >= 2);
+    if (!hosts.length) continue;
+    let sites = top.children.find((c) => c.type === 'folder' && c.name === T('sites'));
+    if (!sites) { sites = { type: 'folder', id: uid++, name: T('sites'), children: [] }; top.children.push(sites); }
+    for (const h of hosts) {
+      let f = sites.children.find((c) => c.type === 'folder' && c.name === h);
+      if (!f) { f = { type: 'folder', id: uid++, name: h, children: [] }; sites.children.push(f); }
+      for (const b of groups[h]) { top.children.splice(top.children.indexOf(b), 1); f.children.push(b); moved++; }
+    }
+  }
+  if (!moved) history.pop();
+  render(); toast(T('grouped', moved));
+}
+function newFolder() {
+  const name = prompt(T('askFolder')); if (!name) return;
+  snapshot();
+  const target = root.children.find((c) => c.toolbar) || root.children.find((c) => c.type === 'folder') || root;
+  target.children.unshift({ type: 'folder', id: uid++, name: name.trim(), children: [] });
+  closed.delete(target.id); render();
+}
+function selectedTopLevel() {
+  // Ignore items whose ancestor folder is also selected.
+  return [...selected].filter((id) => { let p = findParent(id); while (p) { if (selected.has(p.id)) return false; p = findParent(p.id); } return true; });
+}
+function deleteSelected() {
+  const ids = selectedTopLevel(); if (!ids.length || !confirm(T('confirmDel', ids.length))) return;
+  snapshot(); ids.forEach((id) => { const p = findParent(id); if (p) p.children = p.children.filter((c) => c.id !== id); });
+  selected.clear(); render();
+}
+function moveSelected() {
+  const ids = selectedTopLevel(); if (!ids.length) return;
+  const folders = []; walk(root, (x) => { if (x.type === 'folder' && x !== root && !ids.includes(x.id)) folders.push(x); });
+  const path = (f) => { const parts = [f.name]; let p = findParent(f.id); while (p && p !== root) { parts.unshift(p.name); p = findParent(p.id); } return parts.join(' / '); };
+  const list = folders.map((f, i) => `${i + 1}. ${path(f)}`).join('\n');
+  const choice = Number(prompt(T('askMove', list))); const target = folders[choice - 1]; if (!target) return;
+  // Refuse to move a folder inside itself.
+  for (const id of ids) { let p = target; while (p) { if (p.id === id) return; p = findParent(p.id); } }
+  snapshot();
+  ids.forEach((id) => { const p = findParent(id); const n = findNode(id); p.children = p.children.filter((c) => c.id !== id); target.children.push(n); });
+  selected.clear(); closed.delete(target.id); render(); toast(T('moved', ids.length));
+}
+function exportFile() {
+  const blob = new Blob([generate(root)], { type: 'text/html' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = `bookmarks-organized-${new Date().toISOString().slice(0, 10)}.html`; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000); toast(T('downloaded'));
+}
+
+// ------------------------------------------------------------------- render
+const treeEl = document.getElementById('tree');
+function render() {
+  const q = document.getElementById('q').value.trim().toLowerCase();
+  const dupKeys = new Map(); let dupCount = 0;
+  walk(root, (x) => { if (x.type === 'url') { const k = norm(x.url); dupKeys.set(k, (dupKeys.get(k) || 0) + 1); } });
+  dupKeys.forEach((v) => { if (v > 1) dupCount += v - 1; });
+
+  const matches = (n) => n.type === 'url' ? `${n.name} ${n.url}`.toLowerCase().includes(q) : n.name.toLowerCase().includes(q) || n.children.some(matches);
+  const build = (n) => {
+    if (q && !matches(n)) return '';
+    const sel = selected.has(n.id) ? ' checked' : '';
+    if (n.type === 'url') {
+      const dup = dupKeys.get(norm(n.url)) > 1 ? ' dup' : '';
+      const hit = q && `${n.name} ${n.url}`.toLowerCase().includes(q) ? ' match' : '';
+      const h = host(n.url);
+      return `<li><div class="row${dup}${hit}" data-id="${n.id}"><span class="tw"></span><input type="checkbox"${sel} aria-label="select"><img alt="" loading="lazy" src="${h ? `https://icons.duckduckgo.com/ip3/${esc(h)}.ico` : ''}" onerror="this.style.visibility='hidden'"><span class="name" title="${esc(n.name)}">${esc(n.name)}</span><a class="url" href="${esc(n.url)}" target="_blank" rel="noopener noreferrer">${esc(n.url)}</a></div></li>`;
+    }
+    const isClosed = !q && closed.has(n.id);
+    const c = counts(n);
+    const label = n.toolbar ? `${esc(n.name)} ★` : esc(n.name);
+    return `<li class="${isClosed ? 'closed' : ''}"><div class="row" data-id="${n.id}"><span class="tw">${isClosed ? '▸' : '▾'}</span><input type="checkbox"${sel} aria-label="select"><span>📁</span><span class="name">${label}</span><span class="count">${c.u}</span></div><ul>${n.children.map(build).join('')}</ul></li>`;
+  };
+  treeEl.innerHTML = `<ul>${root.children.map(build).join('')}</ul>`;
+  const c = counts(root);
+  document.getElementById('stats').textContent = T('stats', c.u, c.f, dupCount) + (selected.size ? ` · ${T('selected', selected.size)}` : '');
+  document.getElementById('bDel').disabled = document.getElementById('bMove').disabled = !selected.size;
+  document.getElementById('bUndo').disabled = !history.length;
+}
+
+treeEl.addEventListener('click', (e) => {
+  const row = e.target.closest('.row'); if (!row) return;
+  const id = Number(row.dataset.id);
+  if (e.target.classList.contains('tw')) { closed.has(id) ? closed.delete(id) : closed.add(id); render(); }
+  else if (e.target.type === 'checkbox') { e.target.checked ? selected.add(id) : selected.delete(id); render(); }
+});
+treeEl.addEventListener('dblclick', (e) => {
+  if (!e.target.classList.contains('name')) return;
+  const n = findNode(Number(e.target.closest('.row').dataset.id));
+  const name = prompt('', n.name); if (!name || name === n.name) return;
+  snapshot(); n.name = name.trim(); render();
+});
+
+// ------------------------------------------------------------------- input
+async function loadFiles(files) {
+  let added = 0;
+  for (const f of files) {
+    const tree = parse(await f.text());
+    const c = counts(tree).u; if (!c) continue; added += c;
+    if (!root) root = tree; else { snapshot(); merge(root, tree); }
+  }
+  if (!added) { toast(T('noBookmarks')); return; }
+  document.getElementById('work').classList.remove('hidden');
+  render(); toast(T('loaded', added));
+}
+const drop = document.getElementById('drop'); const fileIn = document.getElementById('file');
+drop.onclick = () => fileIn.click();
+drop.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileIn.click(); } };
+fileIn.onchange = () => { loadFiles([...fileIn.files]); fileIn.value = ''; };
+['dragenter', 'dragover'].forEach((t) => drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.add('over'); }));
+['dragleave', 'drop'].forEach((t) => drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.remove('over'); }));
+drop.addEventListener('drop', (e) => loadFiles([...e.dataTransfer.files]));
+
+document.getElementById('q').oninput = () => root && render();
+document.getElementById('bDup').onclick = removeDuplicates;
+document.getElementById('bEmpty').onclick = removeEmpty;
+document.getElementById('bSort').onclick = sortAll;
+document.getElementById('bDomain').onclick = groupByDomain;
+document.getElementById('bFolder').onclick = newFolder;
+document.getElementById('bMove').onclick = moveSelected;
+document.getElementById('bDel').onclick = deleteSelected;
+document.getElementById('bUndo').onclick = undo;
+document.getElementById('bExport').onclick = exportFile;
+document.addEventListener('keydown', (e) => { if ((e.ctrlKey || e.metaKey) && e.key === 'z' && root && document.activeElement.tagName !== 'INPUT') { e.preventDefault(); undo(); } });
+window.addEventListener('beforeunload', (e) => { if (history.length) e.preventDefault(); });
+
+let toastTimer;
+function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2600); }
+
+applyLang();
+</script>
+</body>
+</html>

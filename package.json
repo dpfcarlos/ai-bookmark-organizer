@@ -1,0 +1,24 @@
+{
+  "name": "bookmark-organizer",
+  "version": "1.0.0",
+  "description": "Organize your browser bookmarks: a no-install web tool, an MCP server that lets AI assistants clean up Chrome/Edge/Brave/Vivaldi/Opera bookmarks, and a ready-made skill.",
+  "type": "module",
+  "bin": {
+    "bookmark-organizer-mcp": "src/server.js"
+  },
+  "main": "src/server.js",
+  "files": ["src", "docs", "skills", "README.md", "README.pt-BR.md", "LICENSE"],
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test test/*.test.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": ["bookmarks", "favorites", "chrome", "edge", "brave", "mcp", "model-context-protocol", "claude", "organizer"],
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "zod": "^3.25.0"
+  }
+}
