@@ -10,7 +10,7 @@
   "files": ["src", "docs", "skills", "README.md", "README.pt-BR.md", "LICENSE"],
   "scripts": {
     "start": "node src/server.js",
-    "test": "node --test test/*.test.js"
+    "test": "node --test"
   },
   "engines": {
     "node": ">=18"
