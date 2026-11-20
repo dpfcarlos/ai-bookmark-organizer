@@ -660,11 +660,15 @@ server.registerTool(
         for (const k of cr.ROOT_KEYS) data.roots[k].children = [];
         // Typical exports: one toolbar folder + an "Other bookmarks" folder + loose items.
         const tops = tree.children;
-        const otherNames = ['other bookmarks', 'outros favoritos', 'outros marcadores', 'otros marcadores', 'bookmarks menu', 'menu de favoritos'];
+        const otherNames = [
+          'other bookmarks', 'bookmarks menu', 'outros favoritos', 'outros marcadores', 'menu de favoritos', 'otros marcadores',
+          'autres favoris', 'weitere lesezeichen', 'andere lesezeichen', 'altri preferiti', 'другие закладки', '其他书签', '其他書籤',
+          'その他のブックマーク', '기타 북마크', 'अन्य बुकमार्क', 'الإشارات المرجعية الأخرى', 'diğer yer işaretleri', 'bookmark lainnya',
+        ];
         for (const t of tops) {
           if (t.type === 'folder' && t.toolbar) data.roots.bookmark_bar.children.push(...t.children.map((c) => fromNetscape(newId, c)));
           else if (t.type === 'folder' && otherNames.includes(t.name.toLowerCase())) data.roots.other.children.push(...t.children.map((c) => fromNetscape(newId, c)));
-          else if (t.type === 'folder' && /^(mobile bookmarks|favoritos do celular|marcadores do celular)$/i.test(t.name)) data.roots.synced.children.push(...t.children.map((c) => fromNetscape(newId, c)));
+          else if (t.type === 'folder' && /^(mobile bookmarks|favoritos do celular|marcadores do celular|marcadores del móvil|favoris sur mobile|mobile lesezeichen|preferiti su dispositivi mobili|мобильные закладки|移动设备书签|モバイルのブックマーク|모바일 북마크)$/i.test(t.name)) data.roots.synced.children.push(...t.children.map((c) => fromNetscape(newId, c)));
           else data.roots.other.children.push(fromNetscape(newId, t));
         }
         return `Replaced all bookmarks with ${counts.urls} bookmarks and ${counts.folders} folders from ${input_path}.`;

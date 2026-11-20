@@ -45,8 +45,8 @@ button.danger:hover:not(:disabled) { border-color: var(--danger); background: va
 .toolbar input[type=search] { flex: 1 1 220px; min-width: 0; padding: 7px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); }
 .stats { color: var(--muted); font-size: 14px; margin: 4px 0 10px; }
 .tree { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 8px 4px; overflow-x: auto; }
-.tree ul { list-style: none; margin: 0; padding-left: 20px; }
-.tree > ul { padding-left: 4px; }
+.tree ul { list-style: none; margin: 0; padding-inline-start: 20px; }
+.tree > ul { padding-inline-start: 4px; }
 .row { display: flex; align-items: center; gap: 6px; padding: 3px 6px; border-radius: 6px; min-width: 0; }
 .row:hover { background: var(--accent-soft); }
 .row.dup { background: var(--danger-soft); }
@@ -54,7 +54,7 @@ button.danger:hover:not(:disabled) { border-color: var(--danger); background: va
 .row .tw { width: 18px; text-align: center; cursor: pointer; color: var(--muted); flex: none; user-select: none; }
 .row img { width: 16px; height: 16px; flex: none; }
 .row .name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: text; }
-.row .url { color: var(--muted); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 1; }
+.row .url { unicode-bidi: plaintext; color: var(--muted); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 1; }
 .row .count { color: var(--muted); font-size: 13px; }
 .row input[type=checkbox] { flex: none; margin: 0; }
 li.closed > ul { display: none; }
@@ -72,10 +72,7 @@ footer a { color: var(--accent); }
 <body>
 <header>
   <h1 data-i18n="title">Bookmark Organizer</h1>
-  <select id="lang" aria-label="Language">
-    <option value="en">English</option>
-    <option value="pt">Português</option>
-  </select>
+  <select id="lang" aria-label="Language"></select>
   <p class="sub" data-i18n="subtitle">Clean up and organize your browser bookmarks. Everything runs in this page: your bookmarks are never uploaded.</p>
 </header>
 
@@ -130,9 +127,38 @@ footer a { color: var(--accent); }
 <script>
 'use strict';
 // ------------------------------------------------------------------ i18n
-const I18N = {
-  en: {},
-  pt: {
+// To add a language: copy the "en" block, translate it, and add an <option> to #lang.
+// {placeholders} are filled in by T().
+const LANGS = {
+  en: { name: 'English',
+    title: 'Bookmark Organizer',
+    subtitle: 'Clean up and organize your browser bookmarks. Everything runs in this page: your bookmarks are never uploaded.',
+    s1t: '1. Export', s1: 'In your browser, open the bookmarks manager and export them to an .html file.',
+    s2t: '2. Organize here', s2: 'Load the file, remove duplicates and dead entries, sort and rearrange.',
+    s3t: '3. Load the clean file', s3: 'Download the new file, delete the old bookmarks in the browser and import the new one.',
+    drop: 'Drop your bookmarks .html file here, or click to choose',
+    drop2: 'You can load several files at once (for example from two browsers); they are merged.',
+    howExport: 'How do I export my bookmarks?',
+    howExportBody: '<p><b>Chrome / Edge / Brave / Opera / Vivaldi:</b> press <code>Ctrl+Shift+O</code> (Mac: <code>Cmd+Option+B</code>), click the ⋮ menu at the top right of the bookmarks page and choose <i>Export bookmarks</i>.</p><p><b>Firefox:</b> press <code>Ctrl+Shift+O</code>, then <i>Import and Backup → Export Bookmarks to HTML</i>.</p><p><b>Safari:</b> <i>File → Export → Bookmarks</i>.</p>',
+    search: 'Search name or address…',
+    dups: 'Remove duplicates', empty: 'Remove empty folders', sort: 'Sort A→Z', byDomain: 'Group loose links by site',
+    newFolder: 'New folder', move: 'Move selected', del: 'Delete selected', undo: 'Undo', export: 'Download clean file',
+    tip: 'Tip: double-click a name to rename it. Click the arrow to open or close a folder.',
+    howImport: 'How do I replace the bookmarks in my browser with the clean file?',
+    howImportBody: '<ol><li>Keep the original export somewhere safe: it is your backup.</li><li>If you use sync, the deletion below also applies to your other devices, which is usually what you want.</li><li>In the bookmarks manager (<code>Ctrl+Shift+O</code>), click any item, press <code>Ctrl+A</code> and then <code>Delete</code>. Do it in the bookmarks bar and in <i>Other bookmarks</i>.</li><li>Open the ⋮ menu, choose <i>Import bookmarks</i> and select the clean file. Chrome places it in a folder called "Imported"; just drag its contents to the bookmarks bar.</li><li>In Firefox use <i>Import and Backup → Import Bookmarks from HTML</i>.</li></ol>',
+    foot: 'Free and open source.',
+    stats: '{u} bookmarks, {f} folders', statsDup: ', {d} duplicate copies (in red)', selected: '{n} selected',
+    removedDups: '{n} duplicate(s) removed', noDups: 'No duplicates found',
+    removedEmpty: '{n} empty folder(s) removed', noEmpty: 'No empty folders',
+    sorted: 'Everything sorted (folders first)',
+    grouped: '{n} link(s) grouped by site', noGroup: 'No site has 2 or more loose links',
+    confirmDel: 'Delete {n} item(s)? Folders are deleted with everything inside.',
+    askFolder: 'Name of the new folder:', askMove: 'Move to which folder? Type the number:',
+    moved: '{n} item(s) moved', loaded: '{n} bookmarks loaded',
+    noBookmarks: 'This file has no bookmarks. Check that it is the browser HTML export.',
+    undone: 'Undone', downloaded: 'File downloaded', sites: 'Sites',
+  },
+  pt: { name: 'Português',
     title: 'Organizador de Favoritos',
     subtitle: 'Limpe e organize os favoritos do seu navegador. Tudo roda nesta página: seus favoritos nunca são enviados para lugar nenhum.',
     s1t: '1. Exporte', s1: 'No navegador, abra o gerenciador de favoritos e exporte para um arquivo .html.',
@@ -141,70 +167,334 @@ const I18N = {
     drop: 'Solte aqui o arquivo .html dos favoritos, ou clique para escolher',
     drop2: 'Você pode carregar vários arquivos de uma vez (por exemplo, de dois navegadores) e eles são unidos.',
     howExport: 'Como exportar meus favoritos?',
+    howExportBody: '<p><b>Chrome / Edge / Brave / Opera / Vivaldi:</b> aperte <code>Ctrl+Shift+O</code> (Mac: <code>Cmd+Option+B</code>), clique no menu ⋮ no alto à direita da página de favoritos e escolha <i>Exportar favoritos</i>.</p><p><b>Firefox:</b> aperte <code>Ctrl+Shift+O</code> e depois <i>Importar e backup → Exportar favoritos para HTML</i>.</p><p><b>Safari:</b> <i>Arquivo → Exportar → Favoritos</i>.</p>',
     search: 'Buscar por nome ou endereço…',
     dups: 'Remover duplicados', empty: 'Remover pastas vazias', sort: 'Ordenar A→Z', byDomain: 'Agrupar links soltos por site',
     newFolder: 'Nova pasta', move: 'Mover selecionados', del: 'Excluir selecionados', undo: 'Desfazer', export: 'Baixar arquivo limpo',
     tip: 'Dica: clique duas vezes em um nome para renomear. Clique na seta para abrir ou fechar uma pasta.',
     howImport: 'Como trocar os favoritos do navegador pelo arquivo limpo?',
+    howImportBody: '<ol><li>Guarde a exportação original em um lugar seguro, pois ela é o seu backup.</li><li>Se você usa sincronização, a exclusão abaixo também vale para os outros aparelhos, o que normalmente é o desejado.</li><li>No gerenciador de favoritos (<code>Ctrl+Shift+O</code>), clique em qualquer item, aperte <code>Ctrl+A</code> e depois <code>Delete</code>. Faça isso na barra de favoritos e em <i>Outros favoritos</i>.</li><li>Abra o menu ⋮, escolha <i>Importar favoritos</i> e selecione o arquivo limpo. O Chrome coloca tudo em uma pasta chamada "Importados"; basta arrastar o conteúdo dela para a barra de favoritos.</li><li>No Firefox use <i>Importar e backup → Importar favoritos de HTML</i>.</li></ol>',
     foot: 'Gratuito e de código aberto.',
-    stats: (u, f, d) => `${u} favoritos, ${f} pastas` + (d ? `, ${d} cópias duplicadas (em vermelho)` : ''),
-    selected: (n) => `${n} selecionado(s)`,
-    removedDups: (n) => n ? `${n} duplicado(s) removido(s)` : 'Nenhum duplicado encontrado',
-    removedEmpty: (n) => n ? `${n} pasta(s) vazia(s) removida(s)` : 'Nenhuma pasta vazia',
+    stats: '{u} favoritos, {f} pastas', statsDup: ', {d} cópias duplicadas (em vermelho)', selected: '{n} selecionado(s)',
+    removedDups: '{n} duplicado(s) removido(s)', noDups: 'Nenhum duplicado encontrado',
+    removedEmpty: '{n} pasta(s) vazia(s) removida(s)', noEmpty: 'Nenhuma pasta vazia',
     sorted: 'Tudo ordenado (pastas primeiro)',
-    grouped: (n) => n ? `${n} link(s) agrupado(s) por site` : 'Nenhum site com 2 ou mais links soltos',
-    confirmDel: (n) => `Excluir ${n} item(ns)? Pastas são excluídas com tudo o que há dentro.`,
-    askFolder: 'Nome da nova pasta:',
-    askMove: (list) => `Mover para qual pasta? Digite o número:\n\n${list}`,
-    moved: (n) => `${n} item(ns) movido(s)`,
-    loaded: (u) => `${u} favoritos carregados`,
+    grouped: '{n} link(s) agrupado(s) por site', noGroup: 'Nenhum site com 2 ou mais links soltos',
+    confirmDel: 'Excluir {n} item(ns)? Pastas são excluídas com tudo o que há dentro.',
+    askFolder: 'Nome da nova pasta:', askMove: 'Mover para qual pasta? Digite o número:',
+    moved: '{n} item(ns) movido(s)', loaded: '{n} favoritos carregados',
     noBookmarks: 'Esse arquivo não tem favoritos. Confira se é a exportação em HTML do navegador.',
-    undone: 'Desfeito', downloaded: 'Arquivo baixado',
-    bar: 'Barra de favoritos', other: 'Outros favoritos', sites: 'Sites',
+    undone: 'Desfeito', downloaded: 'Arquivo baixado', sites: 'Sites',
+  },
+  es: { name: 'Español',
+    title: 'Organizador de Marcadores',
+    subtitle: 'Limpia y organiza los marcadores de tu navegador. Todo se ejecuta en esta página: tus marcadores nunca se envían a ningún sitio.',
+    s1t: '1. Exporta', s1: 'En tu navegador, abre el administrador de marcadores y expórtalos a un archivo .html.',
+    s2t: '2. Organiza aquí', s2: 'Carga el archivo, elimina duplicados y entradas inútiles, ordena y reorganiza.',
+    s3t: '3. Carga el archivo limpio', s3: 'Descarga el archivo nuevo, borra los marcadores antiguos del navegador e importa el nuevo.',
+    drop: 'Suelta aquí el archivo .html de marcadores o haz clic para elegirlo',
+    drop2: 'Puedes cargar varios archivos a la vez (por ejemplo, de dos navegadores) y se combinan.',
+    howExport: '¿Cómo exporto mis marcadores?',
+    howExportBody: '<p><b>Chrome / Edge / Brave / Opera / Vivaldi:</b> pulsa <code>Ctrl+Shift+O</code> (Mac: <code>Cmd+Option+B</code>), abre el menú ⋮ arriba a la derecha de la página de marcadores y elige <i>Exportar marcadores</i>.</p><p><b>Firefox:</b> pulsa <code>Ctrl+Shift+O</code> y luego <i>Importar y respaldar → Exportar marcadores a HTML</i>.</p><p><b>Safari:</b> <i>Archivo → Exportar → Favoritos</i>.</p>',
+    search: 'Buscar por nombre o dirección…',
+    dups: 'Eliminar duplicados', empty: 'Eliminar carpetas vacías', sort: 'Ordenar A→Z', byDomain: 'Agrupar enlaces sueltos por sitio',
+    newFolder: 'Nueva carpeta', move: 'Mover seleccionados', del: 'Borrar seleccionados', undo: 'Deshacer', export: 'Descargar archivo limpio',
+    tip: 'Consejo: haz doble clic en un nombre para cambiarlo. Haz clic en la flecha para abrir o cerrar una carpeta.',
+    howImport: '¿Cómo reemplazo los marcadores del navegador por el archivo limpio?',
+    howImportBody: '<ol><li>Guarda la exportación original en un lugar seguro: es tu copia de seguridad.</li><li>Si usas sincronización, el borrado también se aplica a tus otros dispositivos, que normalmente es lo que quieres.</li><li>En el administrador de marcadores (<code>Ctrl+Shift+O</code>), haz clic en cualquier elemento, pulsa <code>Ctrl+A</code> y después <code>Supr</code>. Hazlo en la barra de marcadores y en <i>Otros marcadores</i>.</li><li>Abre el menú ⋮, elige <i>Importar marcadores</i> y selecciona el archivo limpio. Chrome lo coloca en una carpeta llamada "Importados"; arrastra su contenido a la barra de marcadores.</li><li>En Firefox usa <i>Importar y respaldar → Importar marcadores desde HTML</i>.</li></ol>',
+    foot: 'Gratuito y de código abierto.',
+    stats: '{u} marcadores, {f} carpetas', statsDup: ', {d} copias duplicadas (en rojo)', selected: '{n} seleccionado(s)',
+    removedDups: '{n} duplicado(s) eliminado(s)', noDups: 'No se encontraron duplicados',
+    removedEmpty: '{n} carpeta(s) vacía(s) eliminada(s)', noEmpty: 'No hay carpetas vacías',
+    sorted: 'Todo ordenado (carpetas primero)',
+    grouped: '{n} enlace(s) agrupado(s) por sitio', noGroup: 'Ningún sitio tiene 2 o más enlaces sueltos',
+    confirmDel: '¿Borrar {n} elemento(s)? Las carpetas se borran con todo su contenido.',
+    askFolder: 'Nombre de la nueva carpeta:', askMove: '¿A qué carpeta mover? Escribe el número:',
+    moved: '{n} elemento(s) movido(s)', loaded: '{n} marcadores cargados',
+    noBookmarks: 'Este archivo no tiene marcadores. Comprueba que sea la exportación HTML del navegador.',
+    undone: 'Deshecho', downloaded: 'Archivo descargado', sites: 'Sitios',
+  },
+  fr: { name: 'Français',
+    title: 'Organisateur de Favoris',
+    subtitle: 'Nettoyez et organisez les favoris de votre navigateur. Tout fonctionne dans cette page : vos favoris ne sont jamais envoyés nulle part.',
+    s1t: '1. Exportez', s1: 'Dans votre navigateur, ouvrez le gestionnaire de favoris et exportez-les dans un fichier .html.',
+    s2t: '2. Organisez ici', s2: 'Chargez le fichier, supprimez les doublons et les entrées inutiles, triez et réorganisez.',
+    s3t: '3. Chargez le fichier propre', s3: 'Téléchargez le nouveau fichier, supprimez les anciens favoris du navigateur et importez le nouveau.',
+    drop: 'Déposez ici votre fichier .html de favoris, ou cliquez pour le choisir',
+    drop2: 'Vous pouvez charger plusieurs fichiers à la fois (par exemple de deux navigateurs) ; ils sont fusionnés.',
+    howExport: 'Comment exporter mes favoris ?',
+    howExportBody: '<p><b>Chrome / Edge / Brave / Opera / Vivaldi :</b> appuyez sur <code>Ctrl+Maj+O</code> (Mac : <code>Cmd+Option+B</code>), ouvrez le menu ⋮ en haut à droite de la page des favoris et choisissez <i>Exporter les favoris</i>.</p><p><b>Firefox :</b> appuyez sur <code>Ctrl+Maj+O</code>, puis <i>Importation et sauvegarde → Exporter des marque-pages au format HTML</i>.</p><p><b>Safari :</b> <i>Fichier → Exporter → Signets</i>.</p>',
+    search: 'Rechercher un nom ou une adresse…',
+    dups: 'Supprimer les doublons', empty: 'Supprimer les dossiers vides', sort: 'Trier A→Z', byDomain: 'Regrouper les liens isolés par site',
+    newFolder: 'Nouveau dossier', move: 'Déplacer la sélection', del: 'Supprimer la sélection', undo: 'Annuler', export: 'Télécharger le fichier propre',
+    tip: 'Astuce : double-cliquez sur un nom pour le renommer. Cliquez sur la flèche pour ouvrir ou fermer un dossier.',
+    howImport: 'Comment remplacer les favoris du navigateur par le fichier propre ?',
+    howImportBody: '<ol><li>Conservez l\'export original en lieu sûr : c\'est votre sauvegarde.</li><li>Si vous utilisez la synchronisation, la suppression s\'applique aussi à vos autres appareils, ce qui est en général souhaité.</li><li>Dans le gestionnaire de favoris (<code>Ctrl+Maj+O</code>), cliquez sur un élément, appuyez sur <code>Ctrl+A</code> puis sur <code>Suppr</code>. Faites-le dans la barre de favoris et dans <i>Autres favoris</i>.</li><li>Ouvrez le menu ⋮, choisissez <i>Importer des favoris</i> et sélectionnez le fichier propre. Chrome le place dans un dossier « Importés » ; faites glisser son contenu vers la barre de favoris.</li><li>Dans Firefox, utilisez <i>Importation et sauvegarde → Importer des marque-pages au format HTML</i>.</li></ol>',
+    foot: 'Gratuit et open source.',
+    stats: '{u} favoris, {f} dossiers', statsDup: ', {d} copies en double (en rouge)', selected: '{n} sélectionné(s)',
+    removedDups: '{n} doublon(s) supprimé(s)', noDups: 'Aucun doublon trouvé',
+    removedEmpty: '{n} dossier(s) vide(s) supprimé(s)', noEmpty: 'Aucun dossier vide',
+    sorted: 'Tout est trié (dossiers en premier)',
+    grouped: '{n} lien(s) regroupé(s) par site', noGroup: 'Aucun site n\'a 2 liens isolés ou plus',
+    confirmDel: 'Supprimer {n} élément(s) ? Les dossiers sont supprimés avec tout leur contenu.',
+    askFolder: 'Nom du nouveau dossier :', askMove: 'Déplacer vers quel dossier ? Tapez le numéro :',
+    moved: '{n} élément(s) déplacé(s)', loaded: '{n} favoris chargés',
+    noBookmarks: 'Ce fichier ne contient aucun favori. Vérifiez qu\'il s\'agit bien de l\'export HTML du navigateur.',
+    undone: 'Annulé', downloaded: 'Fichier téléchargé', sites: 'Sites',
+  },
+  de: { name: 'Deutsch',
+    title: 'Lesezeichen-Organizer',
+    subtitle: 'Räumen Sie die Lesezeichen Ihres Browsers auf. Alles läuft in dieser Seite: Ihre Lesezeichen werden nie hochgeladen.',
+    s1t: '1. Exportieren', s1: 'Öffnen Sie im Browser die Lesezeichenverwaltung und exportieren Sie die Lesezeichen als .html-Datei.',
+    s2t: '2. Hier organisieren', s2: 'Datei laden, Duplikate und unnötige Einträge entfernen, sortieren und neu ordnen.',
+    s3t: '3. Saubere Datei laden', s3: 'Neue Datei herunterladen, alte Lesezeichen im Browser löschen und die neue importieren.',
+    drop: 'Lesezeichen-.html-Datei hierher ziehen oder klicken, um sie auszuwählen',
+    drop2: 'Sie können mehrere Dateien gleichzeitig laden (z. B. aus zwei Browsern); sie werden zusammengeführt.',
+    howExport: 'Wie exportiere ich meine Lesezeichen?',
+    howExportBody: '<p><b>Chrome / Edge / Brave / Opera / Vivaldi:</b> <code>Strg+Umschalt+O</code> drücken (Mac: <code>Cmd+Option+B</code>), oben rechts auf der Lesezeichenseite das Menü ⋮ öffnen und <i>Lesezeichen exportieren</i> wählen.</p><p><b>Firefox:</b> <code>Strg+Umschalt+O</code>, dann <i>Importieren und Sichern → Lesezeichen nach HTML exportieren</i>.</p><p><b>Safari:</b> <i>Ablage → Exportieren → Lesezeichen</i>.</p>',
+    search: 'Name oder Adresse suchen…',
+    dups: 'Duplikate entfernen', empty: 'Leere Ordner entfernen', sort: 'A→Z sortieren', byDomain: 'Lose Links nach Website gruppieren',
+    newFolder: 'Neuer Ordner', move: 'Auswahl verschieben', del: 'Auswahl löschen', undo: 'Rückgängig', export: 'Saubere Datei herunterladen',
+    tip: 'Tipp: Doppelklick auf einen Namen zum Umbenennen. Klick auf den Pfeil öffnet oder schließt einen Ordner.',
+    howImport: 'Wie ersetze ich die Lesezeichen im Browser durch die saubere Datei?',
+    howImportBody: '<ol><li>Bewahren Sie den ursprünglichen Export sicher auf: Er ist Ihre Sicherung.</li><li>Wenn Sie die Synchronisierung nutzen, gilt das Löschen auch auf Ihren anderen Geräten, was meist gewünscht ist.</li><li>In der Lesezeichenverwaltung (<code>Strg+Umschalt+O</code>) ein Element anklicken, <code>Strg+A</code> und dann <code>Entf</code> drücken. Das in der Lesezeichenleiste und in <i>Weitere Lesezeichen</i> machen.</li><li>Menü ⋮ öffnen, <i>Lesezeichen importieren</i> wählen und die saubere Datei auswählen. Chrome legt sie in einen Ordner „Importiert“; ziehen Sie dessen Inhalt in die Lesezeichenleiste.</li><li>In Firefox: <i>Importieren und Sichern → Lesezeichen von HTML importieren</i>.</li></ol>',
+    foot: 'Kostenlos und Open Source.',
+    stats: '{u} Lesezeichen, {f} Ordner', statsDup: ', {d} doppelte Kopien (rot)', selected: '{n} ausgewählt',
+    removedDups: '{n} Duplikat(e) entfernt', noDups: 'Keine Duplikate gefunden',
+    removedEmpty: '{n} leere(r) Ordner entfernt', noEmpty: 'Keine leeren Ordner',
+    sorted: 'Alles sortiert (Ordner zuerst)',
+    grouped: '{n} Link(s) nach Website gruppiert', noGroup: 'Keine Website hat 2 oder mehr lose Links',
+    confirmDel: '{n} Element(e) löschen? Ordner werden mit ihrem gesamten Inhalt gelöscht.',
+    askFolder: 'Name des neuen Ordners:', askMove: 'In welchen Ordner verschieben? Nummer eingeben:',
+    moved: '{n} Element(e) verschoben', loaded: '{n} Lesezeichen geladen',
+    noBookmarks: 'Diese Datei enthält keine Lesezeichen. Prüfen Sie, ob es der HTML-Export des Browsers ist.',
+    undone: 'Rückgängig gemacht', downloaded: 'Datei heruntergeladen', sites: 'Websites',
+  },
+  it: { name: 'Italiano',
+    title: 'Organizzatore di Preferiti',
+    subtitle: 'Pulisci e organizza i preferiti del tuo browser. Tutto funziona in questa pagina: i tuoi preferiti non vengono mai inviati.',
+    s1t: '1. Esporta', s1: 'Nel browser apri la gestione dei preferiti ed esportali in un file .html.',
+    s2t: '2. Organizza qui', s2: 'Carica il file, rimuovi duplicati e voci inutili, ordina e riorganizza.',
+    s3t: '3. Carica il file pulito', s3: 'Scarica il nuovo file, elimina i vecchi preferiti dal browser e importa quello nuovo.',
+    drop: 'Trascina qui il file .html dei preferiti oppure clicca per sceglierlo',
+    drop2: 'Puoi caricare più file insieme (ad esempio da due browser): vengono uniti.',
+    howExport: 'Come esporto i miei preferiti?',
+    howExportBody: '<p><b>Chrome / Edge / Brave / Opera / Vivaldi:</b> premi <code>Ctrl+Maiusc+O</code> (Mac: <code>Cmd+Option+B</code>), apri il menu ⋮ in alto a destra nella pagina dei preferiti e scegli <i>Esporta preferiti</i>.</p><p><b>Firefox:</b> premi <code>Ctrl+Maiusc+O</code>, poi <i>Importa e salva → Esporta segnalibri in HTML</i>.</p><p><b>Safari:</b> <i>Archivio → Esporta → Preferiti</i>.</p>',
+    search: 'Cerca nome o indirizzo…',
+    dups: 'Rimuovi duplicati', empty: 'Rimuovi cartelle vuote', sort: 'Ordina A→Z', byDomain: 'Raggruppa i link sparsi per sito',
+    newFolder: 'Nuova cartella', move: 'Sposta selezionati', del: 'Elimina selezionati', undo: 'Annulla', export: 'Scarica il file pulito',
+    tip: 'Suggerimento: fai doppio clic su un nome per rinominarlo. Clicca sulla freccia per aprire o chiudere una cartella.',
+    howImport: 'Come sostituisco i preferiti del browser con il file pulito?',
+    howImportBody: '<ol><li>Conserva l\'esportazione originale in un posto sicuro: è il tuo backup.</li><li>Se usi la sincronizzazione, l\'eliminazione vale anche sugli altri dispositivi, di solito è ciò che si vuole.</li><li>Nella gestione dei preferiti (<code>Ctrl+Maiusc+O</code>) clicca su un elemento, premi <code>Ctrl+A</code> e poi <code>Canc</code>. Fallo nella barra dei preferiti e in <i>Altri preferiti</i>.</li><li>Apri il menu ⋮, scegli <i>Importa preferiti</i> e seleziona il file pulito. Chrome lo mette in una cartella "Importati"; trascina il contenuto nella barra dei preferiti.</li><li>In Firefox usa <i>Importa e salva → Importa segnalibri da HTML</i>.</li></ol>',
+    foot: 'Gratuito e open source.',
+    stats: '{u} preferiti, {f} cartelle', statsDup: ', {d} copie duplicate (in rosso)', selected: '{n} selezionati',
+    removedDups: '{n} duplicato/i rimosso/i', noDups: 'Nessun duplicato trovato',
+    removedEmpty: '{n} cartella/e vuota/e rimossa/e', noEmpty: 'Nessuna cartella vuota',
+    sorted: 'Tutto ordinato (prima le cartelle)',
+    grouped: '{n} link raggruppati per sito', noGroup: 'Nessun sito ha 2 o più link sparsi',
+    confirmDel: 'Eliminare {n} elemento/i? Le cartelle vengono eliminate con tutto il contenuto.',
+    askFolder: 'Nome della nuova cartella:', askMove: 'In quale cartella spostare? Scrivi il numero:',
+    moved: '{n} elemento/i spostato/i', loaded: '{n} preferiti caricati',
+    noBookmarks: 'Questo file non contiene preferiti. Verifica che sia l\'esportazione HTML del browser.',
+    undone: 'Annullato', downloaded: 'File scaricato', sites: 'Siti',
+  },
+  ru: { name: 'Русский',
+    title: 'Органайзер закладок',
+    subtitle: 'Очистите и упорядочьте закладки браузера. Всё работает прямо на этой странице: ваши закладки никуда не отправляются.',
+    s1t: '1. Экспорт', s1: 'В браузере откройте диспетчер закладок и экспортируйте их в файл .html.',
+    s2t: '2. Упорядочьте здесь', s2: 'Загрузите файл, удалите дубликаты и лишнее, отсортируйте и разложите по папкам.',
+    s3t: '3. Загрузите чистый файл', s3: 'Скачайте новый файл, удалите старые закладки в браузере и импортируйте новый.',
+    drop: 'Перетащите сюда файл закладок .html или нажмите, чтобы выбрать',
+    drop2: 'Можно загрузить несколько файлов сразу (например, из двух браузеров) — они объединятся.',
+    howExport: 'Как экспортировать закладки?',
+    howExportBody: '<p><b>Chrome / Edge / Brave / Opera / Vivaldi:</b> нажмите <code>Ctrl+Shift+O</code> (Mac: <code>Cmd+Option+B</code>), откройте меню ⋮ в правом верхнем углу страницы закладок и выберите <i>Экспортировать закладки</i>.</p><p><b>Firefox:</b> <code>Ctrl+Shift+O</code>, затем <i>Импорт и резервные копии → Экспорт закладок в HTML-файл</i>.</p><p><b>Safari:</b> <i>Файл → Экспортировать → Закладки</i>.</p>',
+    search: 'Поиск по названию или адресу…',
+    dups: 'Удалить дубликаты', empty: 'Удалить пустые папки', sort: 'Сортировать А→Я', byDomain: 'Сгруппировать ссылки по сайтам',
+    newFolder: 'Новая папка', move: 'Переместить выбранное', del: 'Удалить выбранное', undo: 'Отменить', export: 'Скачать чистый файл',
+    tip: 'Совет: дважды щёлкните по названию, чтобы переименовать. Нажмите на стрелку, чтобы открыть или закрыть папку.',
+    howImport: 'Как заменить закладки в браузере чистым файлом?',
+    howImportBody: '<ol><li>Сохраните исходный экспорт в надёжном месте — это ваша резервная копия.</li><li>Если включена синхронизация, удаление применится и на других устройствах, обычно это и нужно.</li><li>В диспетчере закладок (<code>Ctrl+Shift+O</code>) щёлкните по любому элементу, нажмите <code>Ctrl+A</code>, затем <code>Delete</code>. Сделайте это на панели закладок и в <i>Других закладках</i>.</li><li>Откройте меню ⋮, выберите <i>Импортировать закладки</i> и укажите чистый файл. Chrome поместит его в папку «Импортированные»; перетащите её содержимое на панель закладок.</li><li>В Firefox: <i>Импорт и резервные копии → Импорт закладок из HTML-файла</i>.</li></ol>',
+    foot: 'Бесплатно и с открытым исходным кодом.',
+    stats: 'Закладок: {u}, папок: {f}', statsDup: ', дубликатов: {d} (красным)', selected: 'Выбрано: {n}',
+    removedDups: 'Удалено дубликатов: {n}', noDups: 'Дубликаты не найдены',
+    removedEmpty: 'Удалено пустых папок: {n}', noEmpty: 'Пустых папок нет',
+    sorted: 'Всё отсортировано (папки сначала)',
+    grouped: 'Сгруппировано ссылок: {n}', noGroup: 'Нет сайтов с 2 и более отдельными ссылками',
+    confirmDel: 'Удалить элементов: {n}? Папки удаляются вместе со всем содержимым.',
+    askFolder: 'Название новой папки:', askMove: 'В какую папку переместить? Введите номер:',
+    moved: 'Перемещено элементов: {n}', loaded: 'Загружено закладок: {n}',
+    noBookmarks: 'В этом файле нет закладок. Проверьте, что это HTML-экспорт из браузера.',
+    undone: 'Отменено', downloaded: 'Файл скачан', sites: 'Сайты',
+  },
+  zh: { name: '简体中文',
+    title: '书签整理器',
+    subtitle: '清理并整理浏览器书签。所有操作都在本页面内完成：你的书签不会被上传到任何地方。',
+    s1t: '1. 导出', s1: '在浏览器中打开书签管理器，将书签导出为 .html 文件。',
+    s2t: '2. 在这里整理', s2: '载入文件，删除重复和无用的书签，排序并重新归类。',
+    s3t: '3. 导入整理后的文件', s3: '下载新文件，在浏览器中删除旧书签，然后导入新文件。',
+    drop: '将书签 .html 文件拖到这里，或点击选择文件',
+    drop2: '可以一次载入多个文件（例如来自两个浏览器），它们会被合并。',
+    howExport: '如何导出书签？',
+    howExportBody: '<p><b>Chrome / Edge / Brave / Opera / Vivaldi：</b>按 <code>Ctrl+Shift+O</code>（Mac：<code>Cmd+Option+B</code>），点击书签页面右上角的 ⋮ 菜单，选择<i>导出书签</i>。</p><p><b>Firefox：</b>按 <code>Ctrl+Shift+O</code>，然后选择<i>导入和备份 → 导出书签到 HTML</i>。</p><p><b>Safari：</b><i>文件 → 导出 → 书签</i>。</p>',
+    search: '搜索名称或网址…',
+    dups: '删除重复', empty: '删除空文件夹', sort: '按 A→Z 排序', byDomain: '按网站归类零散链接',
+    newFolder: '新建文件夹', move: '移动所选', del: '删除所选', undo: '撤销', export: '下载整理后的文件',
+    tip: '提示：双击名称可重命名。点击箭头可展开或折叠文件夹。',
+    howImport: '如何用整理后的文件替换浏览器中的书签？',
+    howImportBody: '<ol><li>把原始导出文件保存在安全的地方，它就是你的备份。</li><li>如果开启了同步，删除操作也会同步到其他设备，通常这正是你想要的。</li><li>在书签管理器（<code>Ctrl+Shift+O</code>）中点击任意一项，按 <code>Ctrl+A</code>，再按 <code>Delete</code>。书签栏和<i>其他书签</i>都要这样做。</li><li>打开 ⋮ 菜单，选择<i>导入书签</i>，选中整理后的文件。Chrome 会把它放进名为“已导入”的文件夹，把其中内容拖到书签栏即可。</li><li>Firefox 中使用<i>导入和备份 → 从 HTML 文件导入书签</i>。</li></ol>',
+    foot: '免费且开源。',
+    stats: '{u} 个书签，{f} 个文件夹', statsDup: '，{d} 个重复（红色标出）', selected: '已选 {n} 项',
+    removedDups: '已删除 {n} 个重复', noDups: '没有发现重复',
+    removedEmpty: '已删除 {n} 个空文件夹', noEmpty: '没有空文件夹',
+    sorted: '已全部排序（文件夹在前）',
+    grouped: '已按网站归类 {n} 个链接', noGroup: '没有网站拥有 2 个以上的零散链接',
+    confirmDel: '删除 {n} 项？文件夹会连同其中所有内容一起删除。',
+    askFolder: '新文件夹名称：', askMove: '移动到哪个文件夹？请输入编号：',
+    moved: '已移动 {n} 项', loaded: '已载入 {n} 个书签',
+    noBookmarks: '这个文件里没有书签。请确认它是浏览器导出的 HTML 文件。',
+    undone: '已撤销', downloaded: '文件已下载', sites: '网站',
+  },
+  ja: { name: '日本語',
+    title: 'ブックマーク整理ツール',
+    subtitle: 'ブラウザのブックマークを整理・掃除します。すべてこのページ内で動作し、ブックマークが外部に送信されることはありません。',
+    s1t: '1. エクスポート', s1: 'ブラウザでブックマーク マネージャを開き、.html ファイルにエクスポートします。',
+    s2t: '2. ここで整理', s2: 'ファイルを読み込み、重複や不要な項目を削除し、並べ替えて整理します。',
+    s3t: '3. 整理したファイルを読み込む', s3: '新しいファイルをダウンロードし、ブラウザの古いブックマークを削除してから新しいファイルをインポートします。',
+    drop: 'ブックマークの .html ファイルをここにドロップ、またはクリックして選択',
+    drop2: '複数のファイル（例：2 つのブラウザのもの）を一度に読み込むと、ひとつに統合されます。',
+    howExport: 'ブックマークをエクスポートするには？',
+    howExportBody: '<p><b>Chrome / Edge / Brave / Opera / Vivaldi：</b><code>Ctrl+Shift+O</code>（Mac：<code>Cmd+Option+B</code>）を押し、ブックマーク ページ右上の ⋮ メニューから<i>ブックマークをエクスポート</i>を選びます。</p><p><b>Firefox：</b><code>Ctrl+Shift+O</code> を押し、<i>インポートとバックアップ → HTML としてエクスポート</i>を選びます。</p><p><b>Safari：</b><i>ファイル → 書き出す → ブックマーク</i>。</p>',
+    search: '名前やアドレスで検索…',
+    dups: '重複を削除', empty: '空のフォルダを削除', sort: 'A→Z で並べ替え', byDomain: 'バラバラのリンクをサイト別にまとめる',
+    newFolder: '新しいフォルダ', move: '選択項目を移動', del: '選択項目を削除', undo: '元に戻す', export: '整理したファイルをダウンロード',
+    tip: 'ヒント：名前をダブルクリックすると名前を変更できます。矢印をクリックするとフォルダを開閉できます。',
+    howImport: 'ブラウザのブックマークを整理したファイルに置き換えるには？',
+    howImportBody: '<ol><li>元のエクスポート ファイルは安全な場所に保存してください。それがバックアップになります。</li><li>同期を使っている場合、削除は他の端末にも反映されます。通常はそれで問題ありません。</li><li>ブックマーク マネージャ（<code>Ctrl+Shift+O</code>）で任意の項目をクリックし、<code>Ctrl+A</code> を押してから <code>Delete</code> を押します。ブックマーク バーと<i>その他のブックマーク</i>の両方で行います。</li><li>⋮ メニューから<i>ブックマークをインポート</i>を選び、整理したファイルを選択します。Chrome は「インポートしたブックマーク」フォルダに入れるので、中身をブックマーク バーへドラッグしてください。</li><li>Firefox では<i>インポートとバックアップ → HTML からインポート</i>を使います。</li></ol>',
+    foot: '無料のオープンソースです。',
+    stats: 'ブックマーク {u} 件、フォルダ {f} 個', statsDup: '、重複 {d} 件（赤色）', selected: '{n} 件選択中',
+    removedDups: '重複を {n} 件削除しました', noDups: '重複は見つかりませんでした',
+    removedEmpty: '空のフォルダを {n} 個削除しました', noEmpty: '空のフォルダはありません',
+    sorted: 'すべて並べ替えました（フォルダが先）',
+    grouped: '{n} 件のリンクをサイト別にまとめました', noGroup: 'バラバラのリンクが 2 件以上あるサイトはありません',
+    confirmDel: '{n} 件を削除しますか？フォルダは中身ごと削除されます。',
+    askFolder: '新しいフォルダの名前：', askMove: 'どのフォルダに移動しますか？番号を入力してください：',
+    moved: '{n} 件を移動しました', loaded: 'ブックマークを {n} 件読み込みました',
+    noBookmarks: 'このファイルにはブックマークがありません。ブラウザの HTML エクスポートか確認してください。',
+    undone: '元に戻しました', downloaded: 'ファイルをダウンロードしました', sites: 'サイト',
+  },
+  ko: { name: '한국어',
+    title: '북마크 정리 도구',
+    subtitle: '브라우저 북마크를 정리하세요. 모든 작업은 이 페이지 안에서 이루어지며 북마크는 어디에도 전송되지 않습니다.',
+    s1t: '1. 내보내기', s1: '브라우저에서 북마크 관리자를 열고 .html 파일로 내보냅니다.',
+    s2t: '2. 여기서 정리', s2: '파일을 불러와 중복과 불필요한 항목을 지우고, 정렬하고 다시 배치합니다.',
+    s3t: '3. 정리된 파일 불러오기', s3: '새 파일을 내려받고, 브라우저의 기존 북마크를 삭제한 뒤 새 파일을 가져옵니다.',
+    drop: '북마크 .html 파일을 여기에 놓거나 클릭해서 선택하세요',
+    drop2: '여러 파일(예: 두 브라우저의 북마크)을 한 번에 불러오면 하나로 합쳐집니다.',
+    howExport: '북마크는 어떻게 내보내나요?',
+    howExportBody: '<p><b>Chrome / Edge / Brave / Opera / Vivaldi:</b> <code>Ctrl+Shift+O</code>(Mac: <code>Cmd+Option+B</code>)를 누르고, 북마크 페이지 오른쪽 위의 ⋮ 메뉴에서 <i>북마크 내보내기</i>를 선택합니다.</p><p><b>Firefox:</b> <code>Ctrl+Shift+O</code>를 누른 뒤 <i>가져오기 및 백업 → HTML로 북마크 내보내기</i>를 선택합니다.</p><p><b>Safari:</b> <i>파일 → 내보내기 → 책갈피</i>.</p>',
+    search: '이름이나 주소로 검색…',
+    dups: '중복 삭제', empty: '빈 폴더 삭제', sort: 'A→Z 정렬', byDomain: '흩어진 링크를 사이트별로 묶기',
+    newFolder: '새 폴더', move: '선택 항목 이동', del: '선택 항목 삭제', undo: '실행 취소', export: '정리된 파일 내려받기',
+    tip: '팁: 이름을 두 번 클릭하면 이름을 바꿀 수 있습니다. 화살표를 클릭하면 폴더를 열고 닫습니다.',
+    howImport: '브라우저 북마크를 정리된 파일로 바꾸려면?',
+    howImportBody: '<ol><li>원래 내보낸 파일은 안전한 곳에 보관하세요. 그것이 백업입니다.</li><li>동기화를 사용 중이라면 삭제가 다른 기기에도 적용되며, 보통은 그것이 원하는 결과입니다.</li><li>북마크 관리자(<code>Ctrl+Shift+O</code>)에서 아무 항목이나 클릭하고 <code>Ctrl+A</code>, 그다음 <code>Delete</code>를 누릅니다. 북마크바와 <i>기타 북마크</i> 모두에서 합니다.</li><li>⋮ 메뉴에서 <i>북마크 가져오기</i>를 선택하고 정리된 파일을 고릅니다. Chrome은 "가져온 북마크" 폴더에 넣으므로 그 내용을 북마크바로 끌어다 놓으세요.</li><li>Firefox에서는 <i>가져오기 및 백업 → HTML에서 북마크 가져오기</i>를 사용합니다.</li></ol>',
+    foot: '무료 오픈 소스입니다.',
+    stats: '북마크 {u}개, 폴더 {f}개', statsDup: ', 중복 {d}개(빨간색)', selected: '{n}개 선택됨',
+    removedDups: '중복 {n}개를 삭제했습니다', noDups: '중복이 없습니다',
+    removedEmpty: '빈 폴더 {n}개를 삭제했습니다', noEmpty: '빈 폴더가 없습니다',
+    sorted: '모두 정렬했습니다(폴더 먼저)',
+    grouped: '링크 {n}개를 사이트별로 묶었습니다', noGroup: '흩어진 링크가 2개 이상인 사이트가 없습니다',
+    confirmDel: '{n}개 항목을 삭제할까요? 폴더는 안의 내용과 함께 삭제됩니다.',
+    askFolder: '새 폴더 이름:', askMove: '어느 폴더로 옮길까요? 번호를 입력하세요:',
+    moved: '{n}개 항목을 옮겼습니다', loaded: '북마크 {n}개를 불러왔습니다',
+    noBookmarks: '이 파일에는 북마크가 없습니다. 브라우저에서 내보낸 HTML 파일인지 확인하세요.',
+    undone: '실행 취소됨', downloaded: '파일을 내려받았습니다', sites: '사이트',
+  },
+  hi: { name: 'हिन्दी',
+    title: 'बुकमार्क ऑर्गनाइज़र',
+    subtitle: 'अपने ब्राउज़र के बुकमार्क साफ़ और व्यवस्थित करें। सब कुछ इसी पेज में चलता है: आपके बुकमार्क कहीं अपलोड नहीं होते।',
+    s1t: '1. एक्सपोर्ट करें', s1: 'ब्राउज़र में बुकमार्क मैनेजर खोलें और बुकमार्क को .html फ़ाइल में एक्सपोर्ट करें।',
+    s2t: '2. यहाँ व्यवस्थित करें', s2: 'फ़ाइल लोड करें, डुप्लिकेट और बेकार बुकमार्क हटाएँ, क्रम से लगाएँ और फ़ोल्डरों में बाँटें।',
+    s3t: '3. साफ़ फ़ाइल लोड करें', s3: 'नई फ़ाइल डाउनलोड करें, ब्राउज़र से पुराने बुकमार्क हटाएँ और नई फ़ाइल इम्पोर्ट करें।',
+    drop: 'बुकमार्क की .html फ़ाइल यहाँ छोड़ें, या चुनने के लिए क्लिक करें',
+    drop2: 'आप एक साथ कई फ़ाइलें लोड कर सकते हैं (जैसे दो ब्राउज़र से); वे आपस में जुड़ जाती हैं।',
+    howExport: 'मैं अपने बुकमार्क कैसे एक्सपोर्ट करूँ?',
+    howExportBody: '<p><b>Chrome / Edge / Brave / Opera / Vivaldi:</b> <code>Ctrl+Shift+O</code> दबाएँ (Mac: <code>Cmd+Option+B</code>), बुकमार्क पेज के ऊपर दाईं ओर ⋮ मेन्यू खोलें और <i>बुकमार्क एक्सपोर्ट करें</i> चुनें।</p><p><b>Firefox:</b> <code>Ctrl+Shift+O</code> दबाएँ, फिर <i>Import and Backup → Export Bookmarks to HTML</i>।</p><p><b>Safari:</b> <i>File → Export → Bookmarks</i>।</p>',
+    search: 'नाम या पता खोजें…',
+    dups: 'डुप्लिकेट हटाएँ', empty: 'खाली फ़ोल्डर हटाएँ', sort: 'A→Z क्रम में लगाएँ', byDomain: 'बिखरे लिंक साइट के अनुसार समूह बनाएँ',
+    newFolder: 'नया फ़ोल्डर', move: 'चुने हुए खिसकाएँ', del: 'चुने हुए हटाएँ', undo: 'पूर्ववत करें', export: 'साफ़ फ़ाइल डाउनलोड करें',
+    tip: 'सुझाव: नाम बदलने के लिए नाम पर डबल-क्लिक करें। फ़ोल्डर खोलने या बंद करने के लिए तीर पर क्लिक करें।',
+    howImport: 'ब्राउज़र के बुकमार्क को साफ़ फ़ाइल से कैसे बदलें?',
+    howImportBody: '<ol><li>मूल एक्सपोर्ट फ़ाइल सुरक्षित जगह रखें: यही आपका बैकअप है।</li><li>अगर सिंक चालू है, तो हटाना आपके दूसरे डिवाइस पर भी लागू होगा, जो आम तौर पर सही है।</li><li>बुकमार्क मैनेजर (<code>Ctrl+Shift+O</code>) में किसी भी आइटम पर क्लिक करें, <code>Ctrl+A</code> और फिर <code>Delete</code> दबाएँ। यह बुकमार्क बार और <i>अन्य बुकमार्क</i> दोनों में करें।</li><li>⋮ मेन्यू खोलें, <i>बुकमार्क इम्पोर्ट करें</i> चुनें और साफ़ फ़ाइल चुनें। Chrome इसे "Imported" फ़ोल्डर में रखता है; उसकी सामग्री को बुकमार्क बार में खींच लें।</li><li>Firefox में <i>Import and Backup → Import Bookmarks from HTML</i> का उपयोग करें।</li></ol>',
+    foot: 'मुफ़्त और ओपन सोर्स।',
+    stats: '{u} बुकमार्क, {f} फ़ोल्डर', statsDup: ', {d} डुप्लिकेट (लाल रंग में)', selected: '{n} चुने गए',
+    removedDups: '{n} डुप्लिकेट हटाए गए', noDups: 'कोई डुप्लिकेट नहीं मिला',
+    removedEmpty: '{n} खाली फ़ोल्डर हटाए गए', noEmpty: 'कोई खाली फ़ोल्डर नहीं',
+    sorted: 'सब क्रम में लगा दिया (फ़ोल्डर पहले)',
+    grouped: '{n} लिंक साइट के अनुसार समूहित किए गए', noGroup: 'किसी साइट के 2 या अधिक बिखरे लिंक नहीं हैं',
+    confirmDel: '{n} आइटम हटाएँ? फ़ोल्डर अपनी पूरी सामग्री के साथ हटते हैं।',
+    askFolder: 'नए फ़ोल्डर का नाम:', askMove: 'किस फ़ोल्डर में खिसकाएँ? नंबर लिखें:',
+    moved: '{n} आइटम खिसकाए गए', loaded: '{n} बुकमार्क लोड हुए',
+    noBookmarks: 'इस फ़ाइल में कोई बुकमार्क नहीं है। जाँचें कि यह ब्राउज़र का HTML एक्सपोर्ट है।',
+    undone: 'पूर्ववत किया गया', downloaded: 'फ़ाइल डाउनलोड हुई', sites: 'साइटें',
+  },
+  ar: { name: 'العربية', rtl: true,
+    title: 'منظِّم الإشارات المرجعية',
+    subtitle: 'نظِّف إشاراتك المرجعية في المتصفح ورتِّبها. كل شيء يعمل داخل هذه الصفحة: لا تُرفع إشاراتك المرجعية إلى أي مكان.',
+    s1t: '1. التصدير', s1: 'افتح مدير الإشارات المرجعية في المتصفح وصدِّرها إلى ملف ‎.html.',
+    s2t: '2. الترتيب هنا', s2: 'حمِّل الملف، واحذف المكرر وغير المفيد، ثم رتِّب ونظِّم.',
+    s3t: '3. تحميل الملف النظيف', s3: 'نزِّل الملف الجديد، واحذف الإشارات القديمة من المتصفح، ثم استورد الجديد.',
+    drop: 'أفلِت ملف الإشارات المرجعية ‎.html هنا، أو انقر للاختيار',
+    drop2: 'يمكنك تحميل عدة ملفات معًا (مثلًا من متصفحين) وسيتم دمجها.',
+    howExport: 'كيف أصدِّر إشاراتي المرجعية؟',
+    howExportBody: '<p><b>Chrome / Edge / Brave / Opera / Vivaldi:</b> اضغط <code>Ctrl+Shift+O</code> (على Mac: <code>Cmd+Option+B</code>)، وافتح القائمة ⋮ أعلى صفحة الإشارات المرجعية واختر <i>تصدير الإشارات المرجعية</i>.</p><p><b>Firefox:</b> اضغط <code>Ctrl+Shift+O</code> ثم <i>استيراد ونسخ احتياطي ← تصدير العلامات إلى HTML</i>.</p><p><b>Safari:</b> <i>ملف ← تصدير ← الإشارات</i>.</p>',
+    search: 'ابحث بالاسم أو العنوان…',
+    dups: 'حذف المكرر', empty: 'حذف المجلدات الفارغة', sort: 'ترتيب أبجدي', byDomain: 'تجميع الروابط المتفرقة حسب الموقع',
+    newFolder: 'مجلد جديد', move: 'نقل المحدد', del: 'حذف المحدد', undo: 'تراجع', export: 'تنزيل الملف النظيف',
+    tip: 'تلميح: انقر نقرًا مزدوجًا على الاسم لإعادة تسميته. انقر على السهم لفتح المجلد أو إغلاقه.',
+    howImport: 'كيف أستبدل إشارات المتصفح بالملف النظيف؟',
+    howImportBody: '<ol><li>احتفظ بملف التصدير الأصلي في مكان آمن، فهو نسختك الاحتياطية.</li><li>إذا كانت المزامنة مفعلة فسينطبق الحذف على أجهزتك الأخرى أيضًا، وهذا هو المطلوب عادةً.</li><li>في مدير الإشارات المرجعية (<code>Ctrl+Shift+O</code>) انقر على أي عنصر، ثم اضغط <code>Ctrl+A</code> ثم <code>Delete</code>. افعل ذلك في شريط الإشارات وفي <i>الإشارات المرجعية الأخرى</i>.</li><li>افتح القائمة ⋮ واختر <i>استيراد الإشارات المرجعية</i> ثم حدد الملف النظيف. يضعه Chrome في مجلد باسم "المستوردة"؛ اسحب محتواه إلى شريط الإشارات.</li><li>في Firefox استخدم <i>استيراد ونسخ احتياطي ← استيراد العلامات من HTML</i>.</li></ol>',
+    foot: 'مجاني ومفتوح المصدر.',
+    stats: '{u} إشارة مرجعية، {f} مجلد', statsDup: '، {d} نسخة مكررة (باللون الأحمر)', selected: 'تم تحديد {n}',
+    removedDups: 'تم حذف {n} مكرر', noDups: 'لا توجد عناصر مكررة',
+    removedEmpty: 'تم حذف {n} مجلد فارغ', noEmpty: 'لا توجد مجلدات فارغة',
+    sorted: 'تم ترتيب كل شيء (المجلدات أولًا)',
+    grouped: 'تم تجميع {n} رابط حسب الموقع', noGroup: 'لا يوجد موقع له رابطان متفرقان أو أكثر',
+    confirmDel: 'حذف {n} عنصر؟ تُحذف المجلدات مع كل ما بداخلها.',
+    askFolder: 'اسم المجلد الجديد:', askMove: 'إلى أي مجلد تريد النقل؟ اكتب الرقم:',
+    moved: 'تم نقل {n} عنصر', loaded: 'تم تحميل {n} إشارة مرجعية',
+    noBookmarks: 'لا يحتوي هذا الملف على إشارات مرجعية. تأكد أنه ملف HTML المُصدَّر من المتصفح.',
+    undone: 'تم التراجع', downloaded: 'تم تنزيل الملف', sites: 'المواقع',
   },
 };
-const EN = {
-  howExportBody: `<p><b>Chrome / Edge / Brave / Opera / Vivaldi:</b> press <code>Ctrl+Shift+O</code> (Mac: <code>Cmd+Option+B</code>), click the ⋮ menu at the top right of the bookmarks page and choose <i>Export bookmarks</i>.</p><p><b>Firefox:</b> press <code>Ctrl+Shift+O</code>, then <i>Import and Backup → Export Bookmarks to HTML</i>.</p><p><b>Safari:</b> <i>File → Export → Bookmarks</i>.</p>`,
-  howImportBody: `<ol><li>Keep the original export somewhere safe: it is your backup.</li><li>If you use sync, the deletion below also applies to your other devices, which is usually what you want.</li><li>In the bookmarks manager (<code>Ctrl+Shift+O</code>), click any item, press <code>Ctrl+A</code> and then <code>Delete</code>. Do it in the bookmarks bar and in <i>Other bookmarks</i>.</li><li>Open the ⋮ menu and choose <i>Import bookmarks</i>, then select the clean file. Chrome places it in a folder called "Imported"; just drag its contents to the bookmarks bar.</li><li>In Firefox use <i>Import and Backup → Import Bookmarks from HTML</i>.</li></ol>`,
-  stats: (u, f, d) => `${u} bookmarks, ${f} folders` + (d ? `, ${d} duplicate copies (in red)` : ''),
-  selected: (n) => `${n} selected`,
-  removedDups: (n) => n ? `${n} duplicate(s) removed` : 'No duplicates found',
-  removedEmpty: (n) => n ? `${n} empty folder(s) removed` : 'No empty folders',
-  sorted: 'Everything sorted (folders first)',
-  grouped: (n) => n ? `${n} link(s) grouped by site` : 'No site has 2 or more loose links',
-  confirmDel: (n) => `Delete ${n} item(s)? Folders are deleted with everything inside.`,
-  askFolder: 'Name of the new folder:',
-  askMove: (list) => `Move to which folder? Type the number:\n\n${list}`,
-  moved: (n) => `${n} item(s) moved`,
-  loaded: (u) => `${u} bookmarks loaded`,
-  noBookmarks: 'This file has no bookmarks. Check that it is the browser HTML export.',
-  undone: 'Undone', downloaded: 'File downloaded',
-  bar: 'Bookmarks bar', other: 'Other bookmarks', sites: 'Sites',
-};
-I18N.pt.howExportBody = `<p><b>Chrome / Edge / Brave / Opera / Vivaldi:</b> aperte <code>Ctrl+Shift+O</code> (Mac: <code>Cmd+Option+B</code>), clique no menu ⋮ no alto à direita da página de favoritos e escolha <i>Exportar favoritos</i>.</p><p><b>Firefox:</b> aperte <code>Ctrl+Shift+O</code> e depois <i>Importar e backup → Exportar favoritos para HTML</i>.</p><p><b>Safari:</b> <i>Arquivo → Exportar → Favoritos</i>.</p>`;
-I18N.pt.howImportBody = `<ol><li>Guarde a exportação original em um lugar seguro, pois ela é o seu backup.</li><li>Se você usa sincronização, a exclusão abaixo também vale para os outros aparelhos, o que normalmente é o desejado.</li><li>No gerenciador de favoritos (<code>Ctrl+Shift+O</code>), clique em qualquer item, aperte <code>Ctrl+A</code> e depois <code>Delete</code>. Faça isso na barra de favoritos e em <i>Outros favoritos</i>.</li><li>Abra o menu ⋮, escolha <i>Importar favoritos</i> e selecione o arquivo limpo. O Chrome coloca tudo em uma pasta chamada "Importados"; basta arrastar o conteúdo dela para a barra de favoritos.</li><li>No Firefox use <i>Importar e backup → Importar favoritos de HTML</i>.</li></ol>`;
 
-let lang = 'en';
-try { lang = localStorage.getItem('bo-lang') || ''; } catch {}
-if (!lang) lang = (navigator.language || '').toLowerCase().startsWith('pt') ? 'pt' : 'en';
-const T = (k, ...a) => { const v = (lang === 'pt' ? I18N.pt[k] : undefined) ?? EN[k]; return typeof v === 'function' ? v(...a) : v; };
-const original = {};
+function detectLang() {
+  try { const saved = localStorage.getItem('bo-lang'); if (saved && LANGS[saved]) return saved; } catch {}
+  for (const l of navigator.languages || [navigator.language || 'en']) {
+    const code = String(l).toLowerCase().split('-')[0];
+    if (LANGS[code]) return code;
+  }
+  return 'en';
+}
+let lang = detectLang();
+const T = (k, vars = {}) => {
+  const s = LANGS[lang][k] ?? LANGS.en[k] ?? k;
+  return String(s).replace(/\{(\w+)\}/g, (_, v) => (v in vars ? vars[v] : `{${v}}`));
+};
+const langSelect = document.getElementById('lang');
+langSelect.innerHTML = Object.entries(LANGS).map(([code, d]) => `<option value="${code}">${d.name}</option>`).join('');
 function applyLang() {
-  document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'en';
-  document.getElementById('lang').value = lang;
-  document.querySelectorAll('[data-i18n]').forEach((el) => {
-    const k = el.dataset.i18n; original[k] ??= el.textContent;
-    el.textContent = lang === 'pt' && I18N.pt[k] ? I18N.pt[k] : original[k];
-  });
-  document.querySelectorAll('[data-i18n-ph]').forEach((el) => {
-    const k = el.dataset.i18nPh; original['ph_' + k] ??= el.placeholder;
-    el.placeholder = lang === 'pt' && I18N.pt[k] ? I18N.pt[k] : original['ph_' + k];
-  });
+  const html = document.documentElement;
+  html.lang = lang === 'pt' ? 'pt-BR' : lang === 'zh' ? 'zh-CN' : lang;
+  html.dir = LANGS[lang].rtl ? 'rtl' : 'ltr';
+  langSelect.value = lang;
+  document.querySelectorAll('[data-i18n]').forEach((el) => { el.textContent = T(el.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-ph]').forEach((el) => { el.placeholder = T(el.dataset.i18nPh); });
   document.querySelectorAll('[data-i18n-html]').forEach((el) => { el.innerHTML = T(el.dataset.i18nHtml); });
-  document.title = T('title') || 'Bookmark Organizer';
+  document.title = T('title');
   if (root) render();
 }
-document.getElementById('lang').onchange = (e) => { lang = e.target.value; try { localStorage.setItem('bo-lang', lang); } catch {} applyLang(); };
+langSelect.onchange = (e) => { lang = e.target.value; try { localStorage.setItem('bo-lang', lang); } catch {} applyLang(); };
 
 // ------------------------------------------------------------- model / parse
 let root = null;           // { type:'folder', name, children, toolbar? }
@@ -280,12 +570,12 @@ function merge(target, src) {
 function removeDuplicates() {
   snapshot(); const seen = new Set(); let n = 0;
   walk(root, (x, p) => { if (x.type !== 'url') return; const k = norm(x.url); if (seen.has(k)) { p.children.splice(p.children.indexOf(x), 1); n++; } else seen.add(k); });
-  render(); toast(T('removedDups', n));
+  render(); toast(n ? T('removedDups', { n }) : T('noDups'));
 }
 function removeEmpty() {
   snapshot(); let n = 0;
   const prune = (f) => { f.children = f.children.filter((c) => { if (c.type !== 'folder') return true; prune(c); if (!c.children.length && !c.toolbar) { n++; return false; } return true; }); };
-  prune(root); render(); toast(T('removedEmpty', n));
+  prune(root); render(); toast(n ? T('removedEmpty', { n }) : T('noEmpty'));
 }
 function sortAll() {
   snapshot(); const coll = new Intl.Collator(undefined, { sensitivity: 'base', numeric: true });
@@ -309,7 +599,7 @@ function groupByDomain() {
     }
   }
   if (!moved) history.pop();
-  render(); toast(T('grouped', moved));
+  render(); toast(moved ? T('grouped', { n: moved }) : T('noGroup'));
 }
 function newFolder() {
   const name = prompt(T('askFolder')); if (!name) return;
@@ -323,7 +613,7 @@ function selectedTopLevel() {
   return [...selected].filter((id) => { let p = findParent(id); while (p) { if (selected.has(p.id)) return false; p = findParent(p.id); } return true; });
 }
 function deleteSelected() {
-  const ids = selectedTopLevel(); if (!ids.length || !confirm(T('confirmDel', ids.length))) return;
+  const ids = selectedTopLevel(); if (!ids.length || !confirm(T('confirmDel', { n: ids.length }))) return;
   snapshot(); ids.forEach((id) => { const p = findParent(id); if (p) p.children = p.children.filter((c) => c.id !== id); });
   selected.clear(); render();
 }
@@ -332,12 +622,12 @@ function moveSelected() {
   const folders = []; walk(root, (x) => { if (x.type === 'folder' && x !== root && !ids.includes(x.id)) folders.push(x); });
   const path = (f) => { const parts = [f.name]; let p = findParent(f.id); while (p && p !== root) { parts.unshift(p.name); p = findParent(p.id); } return parts.join(' / '); };
   const list = folders.map((f, i) => `${i + 1}. ${path(f)}`).join('\n');
-  const choice = Number(prompt(T('askMove', list))); const target = folders[choice - 1]; if (!target) return;
+  const choice = Number(prompt(`${T('askMove')}\n\n${list}`)); const target = folders[choice - 1]; if (!target) return;
   // Refuse to move a folder inside itself.
   for (const id of ids) { let p = target; while (p) { if (p.id === id) return; p = findParent(p.id); } }
   snapshot();
   ids.forEach((id) => { const p = findParent(id); const n = findNode(id); p.children = p.children.filter((c) => c.id !== id); target.children.push(n); });
-  selected.clear(); closed.delete(target.id); render(); toast(T('moved', ids.length));
+  selected.clear(); closed.delete(target.id); render(); toast(T('moved', { n: ids.length }));
 }
 function exportFile() {
   const blob = new Blob([generate(root)], { type: 'text/html' });
@@ -371,7 +661,7 @@ function render() {
   };
   treeEl.innerHTML = `<ul>${root.children.map(build).join('')}</ul>`;
   const c = counts(root);
-  document.getElementById('stats').textContent = T('stats', c.u, c.f, dupCount) + (selected.size ? ` · ${T('selected', selected.size)}` : '');
+  document.getElementById('stats').textContent = T('stats', { u: c.u, f: c.f }) + (dupCount ? T('statsDup', { d: dupCount }) : '') + (selected.size ? ` · ${T('selected', { n: selected.size })}` : '');
   document.getElementById('bDel').disabled = document.getElementById('bMove').disabled = !selected.size;
   document.getElementById('bUndo').disabled = !history.length;
 }
@@ -399,7 +689,7 @@ async function loadFiles(files) {
   }
   if (!added) { toast(T('noBookmarks')); return; }
   document.getElementById('work').classList.remove('hidden');
-  render(); toast(T('loaded', added));
+  render(); toast(T('loaded', { n: added }));
 }
 const drop = document.getElementById('drop'); const fileIn = document.getElementById('file');
 drop.onclick = () => fileIn.click();

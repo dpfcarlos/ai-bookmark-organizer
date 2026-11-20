@@ -1,6 +1,6 @@
 # Bookmark Organizer (Organizador de Favoritos)
 
-[English](README.md) · **Português**
+[English](README.md) · **Português** · [Español](README.es.md) · [Français](README.fr.md) · [Deutsch](README.de.md) · [Italiano](README.it.md) · [Русский](README.ru.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [हिन्दी](README.hi.md) · [العربية](README.ar.md)
 
 Limpe e organize os favoritos do seu navegador, seja por conta própria ou pedindo para uma IA fazer isso por você.
 
@@ -17,7 +17,7 @@ O projeto tem três partes:
 Abra **https://dpfcarlos.github.io/bookmark-organizer/** (ou baixe o arquivo [`docs/index.html`](docs/index.html) e abra no navegador).
 
 1. **Exporte** seus favoritos: no Chrome, Edge ou Brave aperte `Ctrl+Shift+O`, abra o menu ⋮ e escolha *Exportar favoritos*. No Firefox, use `Ctrl+Shift+O` → *Importar e backup* → *Exportar favoritos para HTML*.
-2. **Organize** o arquivo na página. Dá para carregar vários arquivos de uma vez, e eles são unidos.
+2. **Organize** o arquivo na página (disponível em 12 idiomas: inglês, português, espanhol, francês, alemão, italiano, russo, chinês, japonês, coreano, hindi e árabe; o idioma é escolhido pelo navegador e pode ser trocado no alto da página). Dá para carregar vários arquivos de uma vez, e eles são unidos.
 3. **Carregue o arquivo limpo**: exclua os favoritos antigos no navegador (no gerenciador de favoritos, `Ctrl+A` e depois `Delete`) e use *Importar favoritos* com o arquivo baixado.
 
 Guarde a exportação original, pois ela é o seu backup.

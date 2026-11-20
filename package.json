@@ -7,7 +7,7 @@
     "bookmark-organizer-mcp": "src/server.js"
   },
   "main": "src/server.js",
-  "files": ["src", "docs", "skills", "README.md", "README.pt-BR.md", "LICENSE"],
+  "files": ["src", "docs", "skills", "README*.md", "LICENSE"],
   "scripts": {
     "start": "node src/server.js",
     "test": "node --test"

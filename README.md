@@ -1,6 +1,6 @@
 # Bookmark Organizer
 
-**English** · [Português](README.pt-BR.md)
+**English** · [Português](README.pt-BR.md) · [Español](README.es.md) · [Français](README.fr.md) · [Deutsch](README.de.md) · [Italiano](README.it.md) · [Русский](README.ru.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [हिन्दी](README.hi.md) · [العربية](README.ar.md)
 
 Clean up and organize your browser bookmarks, by hand or by asking an AI assistant to do it for you.
 
@@ -17,7 +17,7 @@ The project has three parts:
 Open **https://dpfcarlos.github.io/bookmark-organizer/** (or download [`docs/index.html`](docs/index.html) and open it).
 
 1. **Export** your bookmarks: in Chrome/Edge/Brave press `Ctrl+Shift+O`, open the ⋮ menu and choose *Export bookmarks*. In Firefox: `Ctrl+Shift+O` → *Import and Backup* → *Export Bookmarks to HTML*.
-2. **Organize** the file in the page. Several files can be loaded at once and are merged.
+2. **Organize** the file in the page (available in English, Português, Español, Français, Deutsch, Italiano, Русский, 简体中文, 日本語, 한국어, हिन्दी and العربية; the language is picked from your browser and can be changed at the top). Several files can be loaded at once and are merged.
 3. **Load the clean file**: delete the old bookmarks in the browser (select all with `Ctrl+A` in the bookmarks manager, then `Delete`) and use *Import bookmarks* with the downloaded file.
 
 Keep the original export: it is your backup.
