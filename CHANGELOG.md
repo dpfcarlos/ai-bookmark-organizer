@@ -1,10 +1,15 @@
 # Changelog
 
 ## v1.1.0 - 2026-11-21
-- Projeto renomeado para `ai-bookmark-organizer` (nome neutro, sem marca de IA). Pacote npm com escopo: `@dpfcarlos/ai-bookmark-organizer`.
-- Pagina web em 12 idiomas e READMEs traduzidos.
-- Guias em ingles e portugues, dados estruturados, imagem de compartilhamento, `sitemap.xml` e `llms.txt` para buscadores e IAs.
-- `server.json` e `mcpName` para o registro oficial do MCP.
+
+Renamed the project to ai-bookmark-organizer (neutral name, no AI brand). The npm package is now scoped: @dpfcarlos/ai-bookmark-organizer.
+
+Web tool available in 12 languages, and READMEs translated.
+
+Guides in English and Portuguese, structured data, social sharing image, sitemap.xml and llms.txt for search engines and AI assistants.
+
+server.json and mcpName added for the official MCP registry.
 
 ## v1.0.0 - 2026-11-20
-- Primeira versao: ferramenta web, servidor MCP (Chrome, Edge, Brave, Vivaldi, Opera, Chromium) e skill `organize-bookmarks`.
+
+First version: web tool, MCP server (Chrome, Edge, Brave, Vivaldi, Opera, Chromium) and the organize-bookmarks skill.
