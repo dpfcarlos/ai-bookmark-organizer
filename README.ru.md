@@ -1,18 +1,20 @@
-# Bookmark Organizer (Органайзер закладок)
+# AI Bookmark Organizer (Органайзер закладок)
 
 [English](README.md) · [Português](README.pt-BR.md) · [Español](README.es.md) · [Français](README.fr.md) · [Deutsch](README.de.md) · [Italiano](README.it.md) · **Русский** · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [हिन्दी](README.hi.md) · [العربية](README.ar.md)
 
 Очищайте и упорядочивайте закладки браузера вручную или поручите это ИИ.
 
+![AI Bookmark Organizer](docs/screenshot.png)
+
 Проект состоит из трёх частей:
 
-- **[Веб-инструмент](https://dpfcarlos.github.io/bookmark-organizer/)**: страница, которая работает прямо в браузере. Загрузите экспортированные закладки, удалите дубликаты и пустые папки, сгруппируйте ссылки по сайтам, отсортируйте, переместите, переименуйте, удалите лишнее и скачайте чистый файл. Ничего никуда не отправляется.
+- **[Веб-инструмент](https://dpfcarlos.github.io/ai-bookmark-organizer/)**: страница, которая работает прямо в браузере. Загрузите экспортированные закладки, удалите дубликаты и пустые папки, сгруппируйте ссылки по сайтам, отсортируйте, переместите, переименуйте, удалите лишнее и скачайте чистый файл. Ничего никуда не отправляется.
 - **MCP-сервер**: позволяет ИИ читать и изменять закладки Chrome, Edge, Brave, Vivaldi, Opera и Chromium прямо на вашем компьютере: показывать, искать, находить дубликаты и битые ссылки, раскладывать по папкам, экспортировать, удалять всё и загружать новый набор, восстанавливать резервные копии.
 - **Skill** (`organize-bookmarks`): учит ИИ действовать безопасно: сначала резервная копия, проверка, что браузер закрыт, предпросмотр и применение только после вашего подтверждения.
 
 ## 1. Веб-инструмент (без установки)
 
-Откройте **https://dpfcarlos.github.io/bookmark-organizer/** (или скачайте [`docs/index.html`](docs/index.html) и откройте его).
+Откройте **https://dpfcarlos.github.io/ai-bookmark-organizer/** (или скачайте [`docs/index.html`](docs/index.html) и откройте его).
 
 1. **Экспортируйте** закладки: в Chrome, Edge или Brave нажмите `Ctrl+Shift+O`, откройте меню ⋮ и выберите *Экспортировать закладки*. В Firefox: `Ctrl+Shift+O` → *Импорт и резервные копии* → *Экспорт закладок в HTML-файл*.
 2. **Упорядочьте** файл на странице. Можно загрузить несколько файлов сразу — они объединятся.
@@ -27,14 +29,14 @@
 ### Claude Code (плагин: MCP-сервер и skill за один шаг)
 
 ```
-/plugin marketplace add dpfcarlos/bookmark-organizer
-/plugin install bookmark-organizer@bookmark-organizer
+/plugin marketplace add dpfcarlos/ai-bookmark-organizer
+/plugin install ai-bookmark-organizer@ai-bookmark-organizer
 ```
 
 Только MCP-сервер:
 
 ```bash
-claude mcp add bookmark-organizer -- npx -y github:dpfcarlos/bookmark-organizer
+claude mcp add ai-bookmark-organizer -- npx -y github:dpfcarlos/ai-bookmark-organizer
 ```
 
 ### Claude Desktop
@@ -44,9 +46,9 @@ claude mcp add bookmark-organizer -- npx -y github:dpfcarlos/bookmark-organizer
 ```json
 {
   "mcpServers": {
-    "bookmark-organizer": {
+    "ai-bookmark-organizer": {
       "command": "npx",
-      "args": ["-y", "github:dpfcarlos/bookmark-organizer"]
+      "args": ["-y", "github:dpfcarlos/ai-bookmark-organizer"]
     }
   }
 }
@@ -56,7 +58,7 @@ claude mcp add bookmark-organizer -- npx -y github:dpfcarlos/bookmark-organizer
 
 ### Cursor, VS Code, Windsurf и другие MCP-клиенты
 
-Используйте ту же команду в настройках MCP программы: `npx -y github:dpfcarlos/bookmark-organizer` (stdio).
+Используйте ту же команду в настройках MCP программы: `npx -y github:dpfcarlos/ai-bookmark-organizer` (stdio).
 
 ### Примеры запросов
 

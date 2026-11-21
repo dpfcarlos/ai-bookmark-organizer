@@ -1,20 +1,24 @@
-# Bookmark Organizer (Organizador de Favoritos)
+# AI Bookmark Organizer (Organizador de Favoritos)
 
 [English](README.md) · **Português** · [Español](README.es.md) · [Français](README.fr.md) · [Deutsch](README.de.md) · [Italiano](README.it.md) · [Русский](README.ru.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [हिन्दी](README.hi.md) · [العربية](README.ar.md)
 
 Limpe e organize os favoritos do seu navegador, seja por conta própria ou pedindo para uma IA fazer isso por você.
 
+[![test](https://github.com/dpfcarlos/ai-bookmark-organizer/actions/workflows/test.yml/badge.svg)](https://github.com/dpfcarlos/ai-bookmark-organizer/actions) [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
+![AI Bookmark Organizer](docs/screenshot.png)
+
 O projeto tem três partes:
 
 | Parte | Para quem | O que faz |
 |---|---|---|
-| **[Ferramenta web](https://dpfcarlos.github.io/bookmark-organizer/)** | Qualquer pessoa | Uma página que roda no próprio navegador. Você carrega os favoritos exportados, remove duplicados e pastas vazias, agrupa links por site, ordena, move, renomeia e exclui, e depois baixa um arquivo limpo. Nada é enviado para a internet. |
+| **[Ferramenta web](https://dpfcarlos.github.io/ai-bookmark-organizer/)** | Qualquer pessoa | Uma página que roda no próprio navegador. Você carrega os favoritos exportados, remove duplicados e pastas vazias, agrupa links por site, ordena, move, renomeia e exclui, e depois baixa um arquivo limpo. Nada é enviado para a internet. |
 | **Servidor MCP** | Quem usa Claude Desktop, Claude Code, Cursor, VS Code ou outro cliente MCP | Permite que a IA leia e altere os favoritos do Chrome, Edge, Brave, Vivaldi, Opera e Chromium direto no seu computador: listar, buscar, achar duplicados e links quebrados, reorganizar em pastas, exportar, excluir tudo e carregar um conjunto novo, além de restaurar backups. |
 | **Skill** (`organize-bookmarks`) | Os mesmos acima | Ensina a IA a fazer isso com segurança: exportar um backup primeiro, conferir se o navegador está fechado, mostrar uma prévia e só aplicar depois da sua confirmação. |
 
 ## 1. Ferramenta web (sem instalar nada)
 
-Abra **https://dpfcarlos.github.io/bookmark-organizer/** (ou baixe o arquivo [`docs/index.html`](docs/index.html) e abra no navegador).
+Abra **https://dpfcarlos.github.io/ai-bookmark-organizer/** (ou baixe o arquivo [`docs/index.html`](docs/index.html) e abra no navegador).
 
 1. **Exporte** seus favoritos: no Chrome, Edge ou Brave aperte `Ctrl+Shift+O`, abra o menu ⋮ e escolha *Exportar favoritos*. No Firefox, use `Ctrl+Shift+O` → *Importar e backup* → *Exportar favoritos para HTML*.
 2. **Organize** o arquivo na página (disponível em 12 idiomas: inglês, português, espanhol, francês, alemão, italiano, russo, chinês, japonês, coreano, hindi e árabe; o idioma é escolhido pelo navegador e pode ser trocado no alto da página). Dá para carregar vários arquivos de uma vez, e eles são unidos.
@@ -29,14 +33,14 @@ Requisito: [Node.js](https://nodejs.org) versão 18 ou mais recente. O servidor 
 ### Claude Code (plugin com servidor MCP e skill de uma vez)
 
 ```
-/plugin marketplace add dpfcarlos/bookmark-organizer
-/plugin install bookmark-organizer@bookmark-organizer
+/plugin marketplace add dpfcarlos/ai-bookmark-organizer
+/plugin install ai-bookmark-organizer@ai-bookmark-organizer
 ```
 
 Somente o servidor MCP:
 
 ```bash
-claude mcp add bookmark-organizer -- npx -y github:dpfcarlos/bookmark-organizer
+claude mcp add ai-bookmark-organizer -- npx -y github:dpfcarlos/ai-bookmark-organizer
 ```
 
 ### Claude Desktop
@@ -46,9 +50,9 @@ Abra *Configurações → Desenvolvedor → Editar configuração* e acrescente 
 ```json
 {
   "mcpServers": {
-    "bookmark-organizer": {
+    "ai-bookmark-organizer": {
       "command": "npx",
-      "args": ["-y", "github:dpfcarlos/bookmark-organizer"]
+      "args": ["-y", "github:dpfcarlos/ai-bookmark-organizer"]
     }
   }
 }
@@ -56,9 +60,11 @@ Abra *Configurações → Desenvolvedor → Editar configuração* e acrescente 
 
 Reinicie o Claude Desktop. Para adicionar a skill, baixe a pasta [`skills/organize-bookmarks`](skills/organize-bookmarks) em formato .zip e envie em *Configurações → Capacidades → Skills*.
 
-### Cursor, VS Code, Windsurf e outros clientes MCP
+### Cursor, VS Code, Windsurf, Gemini CLI, Codex CLI e outros clientes MCP
 
-Use o mesmo comando nas configurações de MCP do programa: `npx -y github:dpfcarlos/bookmark-organizer` (stdio).
+Use o mesmo comando nas configurações de MCP do programa: `npx -y github:dpfcarlos/ai-bookmark-organizer` (stdio). Qualquer aplicativo que rode servidores MCP locais por stdio deve funcionar. Testei o servidor com o cliente MCP padrão do SDK oficial, então abra uma issue se algum aplicativo específico se comportar mal.
+
+Sites de chat que aceitam apenas servidores MCP remotos não conseguem rodá-lo. Nesses casos use a **ferramenta web**, que funciona junto com qualquer chat de IA: exporte os favoritos, peça à IA um plano de pastas e aplique o plano na ferramenta web.
 
 ### Exemplos de pedidos
 

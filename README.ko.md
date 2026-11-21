@@ -1,18 +1,20 @@
-# Bookmark Organizer (북마크 정리 도구)
+# AI Bookmark Organizer (북마크 정리 도구)
 
 [English](README.md) · [Português](README.pt-BR.md) · [Español](README.es.md) · [Français](README.fr.md) · [Deutsch](README.de.md) · [Italiano](README.it.md) · [Русский](README.ru.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · **한국어** · [हिन्दी](README.hi.md) · [العربية](README.ar.md)
 
 브라우저 북마크를 직접 정리하거나 AI에게 맡겨 정리하세요.
 
+![AI Bookmark Organizer](docs/screenshot.png)
+
 프로젝트는 세 부분으로 이루어져 있습니다.
 
-- **[웹 도구](https://dpfcarlos.github.io/bookmark-organizer/)**: 브라우저에서 실행되는 한 페이지입니다. 내보낸 북마크를 불러와 중복과 빈 폴더를 지우고, 링크를 사이트별로 묶고, 정렬·이동·이름 변경·삭제를 한 뒤 정리된 파일을 내려받습니다. 아무것도 업로드되지 않습니다.
+- **[웹 도구](https://dpfcarlos.github.io/ai-bookmark-organizer/)**: 브라우저에서 실행되는 한 페이지입니다. 내보낸 북마크를 불러와 중복과 빈 폴더를 지우고, 링크를 사이트별로 묶고, 정렬·이동·이름 변경·삭제를 한 뒤 정리된 파일을 내려받습니다. 아무것도 업로드되지 않습니다.
 - **MCP 서버**: AI가 내 컴퓨터에서 Chrome, Edge, Brave, Vivaldi, Opera, Chromium 북마크를 직접 읽고 바꿀 수 있게 합니다. 목록 보기, 검색, 중복과 깨진 링크 찾기, 폴더로 재정리, 내보내기, 전체 삭제 후 새 북마크 불러오기, 백업 복원을 지원합니다.
 - **Skill** (`organize-bookmarks`): AI에게 안전한 순서를 알려 줍니다. 먼저 백업하고, 브라우저가 닫혀 있는지 확인하고, 미리보기를 보여 준 뒤 사용자가 확인해야만 적용합니다.
 
 ## 1. 웹 도구 (설치 불필요)
 
-**https://dpfcarlos.github.io/bookmark-organizer/** 를 엽니다(또는 [`docs/index.html`](docs/index.html)을 내려받아 엽니다).
+**https://dpfcarlos.github.io/ai-bookmark-organizer/** 를 엽니다(또는 [`docs/index.html`](docs/index.html)을 내려받아 엽니다).
 
 1. 북마크를 **내보냅니다**. Chrome, Edge, Brave에서는 `Ctrl+Shift+O`를 누르고 ⋮ 메뉴에서 *북마크 내보내기*를 선택합니다. Firefox: `Ctrl+Shift+O` → *가져오기 및 백업* → *HTML로 북마크 내보내기*.
 2. 페이지에서 파일을 **정리**합니다. 여러 파일을 한 번에 불러오면 합쳐집니다.
@@ -27,14 +29,14 @@
 ### Claude Code (플러그인: MCP 서버와 skill을 한 번에)
 
 ```
-/plugin marketplace add dpfcarlos/bookmark-organizer
-/plugin install bookmark-organizer@bookmark-organizer
+/plugin marketplace add dpfcarlos/ai-bookmark-organizer
+/plugin install ai-bookmark-organizer@ai-bookmark-organizer
 ```
 
 MCP 서버만 설치:
 
 ```bash
-claude mcp add bookmark-organizer -- npx -y github:dpfcarlos/bookmark-organizer
+claude mcp add ai-bookmark-organizer -- npx -y github:dpfcarlos/ai-bookmark-organizer
 ```
 
 ### Claude Desktop
@@ -44,9 +46,9 @@ claude mcp add bookmark-organizer -- npx -y github:dpfcarlos/bookmark-organizer
 ```json
 {
   "mcpServers": {
-    "bookmark-organizer": {
+    "ai-bookmark-organizer": {
       "command": "npx",
-      "args": ["-y", "github:dpfcarlos/bookmark-organizer"]
+      "args": ["-y", "github:dpfcarlos/ai-bookmark-organizer"]
     }
   }
 }
@@ -56,7 +58,7 @@ Claude Desktop을 다시 시작합니다. skill을 추가하려면 [`skills/orga
 
 ### Cursor, VS Code, Windsurf 및 기타 MCP 클라이언트
 
-프로그램의 MCP 설정에서 같은 명령을 사용합니다: `npx -y github:dpfcarlos/bookmark-organizer` (stdio).
+프로그램의 MCP 설정에서 같은 명령을 사용합니다: `npx -y github:dpfcarlos/ai-bookmark-organizer` (stdio).
 
 ### 요청 예시
 

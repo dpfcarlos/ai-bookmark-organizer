@@ -3,8 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Bookmark Organizer</title>
-<meta name="description" content="Clean up and organize your browser bookmarks. Runs 100% in your browser: nothing is uploaded.">
+<title>AI Bookmark Organizer - free bookmark cleaner, sorter and duplicate remover</title>
+<meta name="description" content="Clean up and organize your browser bookmarks for free: remove duplicates, sort, group by site. Runs in your browser, nothing is uploaded. Includes an MCP server so AI assistants can do it for you.">
+<link rel="canonical" href="https://dpfcarlos.github.io/ai-bookmark-organizer/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="AI Bookmark Organizer">
+<meta property="og:description" content="Free tool to clean up and organize browser bookmarks, plus an MCP server and skill for AI assistants.">
+<meta property="og:url" content="https://dpfcarlos.github.io/ai-bookmark-organizer/">
+<meta property="og:image" content="https://dpfcarlos.github.io/ai-bookmark-organizer/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "SoftwareApplication", "name": "AI Bookmark Organizer", "url": "https://dpfcarlos.github.io/ai-bookmark-organizer/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (runs in the browser)", "description": "Free tool to remove duplicate bookmarks, sort, group and organize browser bookmarks. Includes an MCP server and agent skill so AI assistants can do it for you.", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "inLanguage": ["en", "pt", "es", "fr", "de", "it", "ru", "zh", "ja", "ko", "hi", "ar"], "license": "https://opensource.org/licenses/MIT", "isAccessibleForFree": true, "image": "https://dpfcarlos.github.io/ai-bookmark-organizer/og.png", "screenshot": "https://dpfcarlos.github.io/ai-bookmark-organizer/screenshot.png", "author": {"@type": "Person", "name": "dpfcarlos", "url": "https://github.com/dpfcarlos"}, "sameAs": ["https://github.com/dpfcarlos/ai-bookmark-organizer"], "codeRepository": "https://github.com/dpfcarlos/ai-bookmark-organizer"}]}</script>
 <style>
 :root {
   --bg: #f6f7f9; --panel: #ffffff; --text: #1d2330; --muted: #667085; --line: #e3e6eb;
@@ -71,7 +79,7 @@ footer a { color: var(--accent); }
 </head>
 <body>
 <header>
-  <h1 data-i18n="title">Bookmark Organizer</h1>
+  <h1 data-i18n="title">AI Bookmark Organizer</h1>
   <select id="lang" aria-label="Language"></select>
   <p class="sub" data-i18n="subtitle">Clean up and organize your browser bookmarks. Everything runs in this page: your bookmarks are never uploaded.</p>
 </header>
@@ -120,7 +128,13 @@ footer a { color: var(--accent); }
 
 <footer>
   <span data-i18n="foot">Free and open source.</span>
-  <a href="https://github.com/dpfcarlos/bookmark-organizer">GitHub</a>
+  <a href="https://github.com/dpfcarlos/ai-bookmark-organizer">GitHub</a>
+  <p class="note">
+    <a href="guides/remove-duplicate-bookmarks.html">Remove duplicate bookmarks</a> &middot;
+    <a href="guides/organize-bookmarks-with-ai.html">Organize bookmarks with AI</a> &middot;
+    <a href="guides/export-import-bookmarks.html">Export and import bookmarks</a> &middot;
+    <a href="guides/pt/organizar-favoritos-com-ia.html">Guias em portugu&ecirc;s</a>
+  </p>
 </footer>
 <div id="toast" role="status"></div>
 
@@ -131,7 +145,7 @@ footer a { color: var(--accent); }
 // {placeholders} are filled in by T().
 const LANGS = {
   en: { name: 'English',
-    title: 'Bookmark Organizer',
+    title: 'AI Bookmark Organizer',
     subtitle: 'Clean up and organize your browser bookmarks. Everything runs in this page: your bookmarks are never uploaded.',
     s1t: '1. Export', s1: 'In your browser, open the bookmarks manager and export them to an .html file.',
     s2t: '2. Organize here', s2: 'Load the file, remove duplicates and dead entries, sort and rearrange.',

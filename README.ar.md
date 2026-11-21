@@ -1,20 +1,22 @@
 <div dir="rtl">
 
-# Bookmark Organizer (منظِّم الإشارات المرجعية)
+# AI Bookmark Organizer (منظِّم الإشارات المرجعية)
 
 [English](README.md) · [Português](README.pt-BR.md) · [Español](README.es.md) · [Français](README.fr.md) · [Deutsch](README.de.md) · [Italiano](README.it.md) · [Русский](README.ru.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [हिन्दी](README.hi.md) · **العربية**
 
 نظِّف إشاراتك المرجعية في المتصفح ورتِّبها بنفسك، أو اطلب من الذكاء الاصطناعي أن يقوم بذلك نيابةً عنك.
 
+![AI Bookmark Organizer](docs/screenshot.png)
+
 يتكوّن المشروع من ثلاثة أجزاء:
 
-- **[أداة الويب](https://dpfcarlos.github.io/bookmark-organizer/)**: صفحة تعمل داخل متصفحك. حمِّل الإشارات المرجعية المُصدَّرة، واحذف المكرر والمجلدات الفارغة، وجمِّع الروابط حسب الموقع، ورتِّب وانقل وأعد التسمية واحذف، ثم نزِّل ملفًا نظيفًا. لا يُرفع أي شيء إلى الإنترنت.
+- **[أداة الويب](https://dpfcarlos.github.io/ai-bookmark-organizer/)**: صفحة تعمل داخل متصفحك. حمِّل الإشارات المرجعية المُصدَّرة، واحذف المكرر والمجلدات الفارغة، وجمِّع الروابط حسب الموقع، ورتِّب وانقل وأعد التسمية واحذف، ثم نزِّل ملفًا نظيفًا. لا يُرفع أي شيء إلى الإنترنت.
 - **خادم MCP**: يتيح للذكاء الاصطناعي قراءة الإشارات المرجعية في Chrome وEdge وBrave وVivaldi وOpera وChromium وتعديلها مباشرة على جهازك: العرض، والبحث، وإيجاد المكرر والروابط المعطلة، وإعادة التنظيم في مجلدات، والتصدير، وحذف الكل وتحميل مجموعة جديدة، واستعادة النسخ الاحتياطية.
 - **Skill** (`organize-bookmarks`): تعلّم الذكاء الاصطناعي الطريقة الآمنة: نسخة احتياطية أولًا، ثم التأكد من إغلاق المتصفح، ثم عرض معاينة، ولا يُطبَّق أي تغيير إلا بعد موافقتك.
 
 ## 1. أداة الويب (بدون تثبيت)
 
-افتح **https://dpfcarlos.github.io/bookmark-organizer/** (أو نزِّل [`docs/index.html`](docs/index.html) وافتحه).
+افتح **https://dpfcarlos.github.io/ai-bookmark-organizer/** (أو نزِّل [`docs/index.html`](docs/index.html) وافتحه).
 
 1. **صدِّر** إشاراتك المرجعية: في Chrome أو Edge أو Brave اضغط `Ctrl+Shift+O`، وافتح القائمة ⋮ واختر *تصدير الإشارات المرجعية*. في Firefox: `Ctrl+Shift+O` ← *استيراد ونسخ احتياطي* ← *تصدير العلامات إلى HTML*.
 2. **رتِّب** الملف في الصفحة. يمكن تحميل عدة ملفات معًا وسيتم دمجها.
@@ -31,14 +33,14 @@
 ### Claude Code (إضافة: خادم MCP وskill بخطوة واحدة)
 
 ```
-/plugin marketplace add dpfcarlos/bookmark-organizer
-/plugin install bookmark-organizer@bookmark-organizer
+/plugin marketplace add dpfcarlos/ai-bookmark-organizer
+/plugin install ai-bookmark-organizer@ai-bookmark-organizer
 ```
 
 خادم MCP فقط:
 
 ```bash
-claude mcp add bookmark-organizer -- npx -y github:dpfcarlos/bookmark-organizer
+claude mcp add ai-bookmark-organizer -- npx -y github:dpfcarlos/ai-bookmark-organizer
 ```
 
 ### Claude Desktop
@@ -52,9 +54,9 @@ claude mcp add bookmark-organizer -- npx -y github:dpfcarlos/bookmark-organizer
 ```json
 {
   "mcpServers": {
-    "bookmark-organizer": {
+    "ai-bookmark-organizer": {
       "command": "npx",
-      "args": ["-y", "github:dpfcarlos/bookmark-organizer"]
+      "args": ["-y", "github:dpfcarlos/ai-bookmark-organizer"]
     }
   }
 }
@@ -66,7 +68,7 @@ claude mcp add bookmark-organizer -- npx -y github:dpfcarlos/bookmark-organizer
 
 ### Cursor وVS Code وWindsurf وعملاء MCP الآخرون
 
-استخدم الأمر نفسه في إعدادات MCP للبرنامج: `npx -y github:dpfcarlos/bookmark-organizer` (stdio).
+استخدم الأمر نفسه في إعدادات MCP للبرنامج: `npx -y github:dpfcarlos/ai-bookmark-organizer` (stdio).
 
 ### أمثلة على الطلبات
 

@@ -1,13 +1,14 @@
 {
-  "name": "bookmark-organizer",
-  "version": "1.0.0",
-  "description": "Organize your browser bookmarks: a no-install web tool, an MCP server that lets AI assistants clean up Chrome/Edge/Brave/Vivaldi/Opera bookmarks, and a ready-made skill.",
+  "name": "@dpfcarlos/ai-bookmark-organizer",
+  "version": "1.1.0",
+  "mcpName": "io.github.dpfcarlos/ai-bookmark-organizer",
+  "description": "Organize and clean up browser bookmarks: a free no-install web tool, plus an MCP server and agent skill that let any MCP-compatible AI assistant do it for you (Chrome, Edge, Brave, Vivaldi, Opera).",
   "type": "module",
   "bin": {
-    "bookmark-organizer-mcp": "src/server.js"
+    "ai-bookmark-organizer": "src/server.js"
   },
   "main": "src/server.js",
-  "files": ["src", "docs", "skills", "README*.md", "LICENSE"],
+  "files": ["src", "docs", "skills", "server.json", "README*.md", "LICENSE"],
   "scripts": {
     "start": "node src/server.js",
     "test": "node --test"
@@ -15,7 +16,23 @@
   "engines": {
     "node": ">=18"
   },
-  "keywords": ["bookmarks", "favorites", "chrome", "edge", "brave", "mcp", "model-context-protocol", "claude", "organizer"],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dpfcarlos/ai-bookmark-organizer.git"
+  },
+  "homepage": "https://dpfcarlos.github.io/ai-bookmark-organizer/",
+  "bugs": {
+    "url": "https://github.com/dpfcarlos/ai-bookmark-organizer/issues"
+  },
+  "author": "dpfcarlos (https://github.com/dpfcarlos)",
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "bookmarks", "bookmark-manager", "bookmark-organizer", "favorites", "browser", "chrome", "edge", "brave",
+    "mcp", "mcp-server", "model-context-protocol", "ai", "agent-skill", "claude", "chatgpt", "gemini", "cursor",
+    "productivity", "organizer", "duplicates", "cleanup"
+  ],
   "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.32.2",

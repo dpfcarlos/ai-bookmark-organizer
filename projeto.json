@@ -1,0 +1,8 @@
+{
+  "nome": "ai-bookmark-organizer",
+  "versao": "1.1.0",
+  "descricao": "Ferramenta web, servidor MCP e skill para organizar favoritos do navegador (Chrome, Edge, Brave, Vivaldi, Opera). Publico por pedido expresso do usuario.",
+  "repositorio": "https://github.com/dpfcarlos/ai-bookmark-organizer",
+  "site": "https://dpfcarlos.github.io/ai-bookmark-organizer/",
+  "pacote_npm": "@dpfcarlos/ai-bookmark-organizer"
+}

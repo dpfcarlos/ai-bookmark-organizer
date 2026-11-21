@@ -1,18 +1,20 @@
-# Bookmark Organizer（ブックマーク整理ツール）
+# AI Bookmark Organizer（ブックマーク整理ツール）
 
 [English](README.md) · [Português](README.pt-BR.md) · [Español](README.es.md) · [Français](README.fr.md) · [Deutsch](README.de.md) · [Italiano](README.it.md) · [Русский](README.ru.md) · [简体中文](README.zh-CN.md) · **日本語** · [한국어](README.ko.md) · [हिन्दी](README.hi.md) · [العربية](README.ar.md)
 
 ブラウザのブックマークを、手作業でも AI に任せても整理できます。
 
+![AI Bookmark Organizer](docs/screenshot.png)
+
 このプロジェクトは 3 つの部分でできています。
 
-- **[Web ツール](https://dpfcarlos.github.io/bookmark-organizer/)**：ブラウザ内で動く 1 枚のページです。エクスポートしたブックマークを読み込み、重複や空フォルダの削除、サイト別のまとめ、並べ替え、移動、名前変更、削除を行い、整理済みのファイルをダウンロードできます。データは一切送信されません。
+- **[Web ツール](https://dpfcarlos.github.io/ai-bookmark-organizer/)**：ブラウザ内で動く 1 枚のページです。エクスポートしたブックマークを読み込み、重複や空フォルダの削除、サイト別のまとめ、並べ替え、移動、名前変更、削除を行い、整理済みのファイルをダウンロードできます。データは一切送信されません。
 - **MCP サーバー**：AI があなたのパソコン上で Chrome、Edge、Brave、Vivaldi、Opera、Chromium のブックマークを直接読み書きできるようにします。一覧表示、検索、重複やリンク切れの検出、フォルダへの整理、エクスポート、全削除と新しいセットの読み込み、バックアップの復元に対応しています。
 - **Skill**（`organize-bookmarks`）：AI に安全な手順を教えます。まずバックアップを取り、ブラウザが閉じていることを確認し、プレビューを見せ、あなたが確認してから実行します。
 
 ## 1. Web ツール（インストール不要）
 
-**https://dpfcarlos.github.io/bookmark-organizer/** を開きます（または [`docs/index.html`](docs/index.html) をダウンロードして開きます）。
+**https://dpfcarlos.github.io/ai-bookmark-organizer/** を開きます（または [`docs/index.html`](docs/index.html) をダウンロードして開きます）。
 
 1. ブックマークを**エクスポート**します。Chrome / Edge / Brave では `Ctrl+Shift+O` を押し、⋮ メニューから*ブックマークをエクスポート*を選びます。Firefox では `Ctrl+Shift+O` → *インポートとバックアップ* → *HTML としてエクスポート*。
 2. ページ上でファイルを**整理**します。複数のファイルを一度に読み込むと統合されます。
@@ -27,14 +29,14 @@
 ### Claude Code（プラグイン：MCP サーバーと skill を一度に）
 
 ```
-/plugin marketplace add dpfcarlos/bookmark-organizer
-/plugin install bookmark-organizer@bookmark-organizer
+/plugin marketplace add dpfcarlos/ai-bookmark-organizer
+/plugin install ai-bookmark-organizer@ai-bookmark-organizer
 ```
 
 MCP サーバーのみ：
 
 ```bash
-claude mcp add bookmark-organizer -- npx -y github:dpfcarlos/bookmark-organizer
+claude mcp add ai-bookmark-organizer -- npx -y github:dpfcarlos/ai-bookmark-organizer
 ```
 
 ### Claude Desktop
@@ -44,9 +46,9 @@ claude mcp add bookmark-organizer -- npx -y github:dpfcarlos/bookmark-organizer
 ```json
 {
   "mcpServers": {
-    "bookmark-organizer": {
+    "ai-bookmark-organizer": {
       "command": "npx",
-      "args": ["-y", "github:dpfcarlos/bookmark-organizer"]
+      "args": ["-y", "github:dpfcarlos/ai-bookmark-organizer"]
     }
   }
 }
@@ -56,7 +58,7 @@ Claude Desktop を再起動します。skill を追加するには、[`skills/or
 
 ### Cursor、VS Code、Windsurf などの MCP クライアント
 
-各ソフトの MCP 設定で同じコマンドを使います：`npx -y github:dpfcarlos/bookmark-organizer`（stdio）。
+各ソフトの MCP 設定で同じコマンドを使います：`npx -y github:dpfcarlos/ai-bookmark-organizer`（stdio）。
 
 ### 依頼の例
 

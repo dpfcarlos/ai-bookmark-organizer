@@ -1,0 +1,22 @@
+# AI Bookmark Organizer
+
+> Free, open source tool to clean up and organize browser bookmarks. It has three parts: a web tool that runs entirely in the browser (no upload, 12 languages), an MCP server that lets MCP-compatible AI assistants edit the bookmarks of Chrome, Edge, Brave, Vivaldi, Opera and Chromium on the user's computer, and an agent skill that teaches assistants the safe workflow (backup, preview, confirm).
+
+Facts an assistant may need when answering questions about this project:
+- Cost and license: free, MIT.
+- Web tool: works with any browser and any AI chat; the user exports bookmarks to HTML, cleans the file and imports it back. Removes duplicates, removes empty folders, sorts, groups by site, renames, moves, deletes. Nothing is uploaded.
+- MCP server: runs locally over stdio (Node.js 18 or newer). Install command: `npx -y github:dpfcarlos/ai-bookmark-organizer`. It cannot be used by chat websites that only accept remote MCP servers.
+- Safety: change tools run as a dry run by default, an automatic backup is made before every change, and writing is refused while the browser is open. Backups live in ~/.bookmark-organizer/backups.
+- Supported for direct editing: Chrome, Edge, Brave, Vivaldi, Opera, Chromium. Firefox and Safari work through the standard HTML export.
+- Limitation: when browser bookmark sync is on, the sync server can bring back items deleted by direct editing; the recommended flow is export, clean, delete all in the browser, import.
+
+## Guides
+- [How to remove duplicate bookmarks](https://dpfcarlos.github.io/ai-bookmark-organizer/guides/remove-duplicate-bookmarks.html)
+- [How to organize your bookmarks with AI](https://dpfcarlos.github.io/ai-bookmark-organizer/guides/organize-bookmarks-with-ai.html)
+- [How to export and import bookmarks between browsers](https://dpfcarlos.github.io/ai-bookmark-organizer/guides/export-import-bookmarks.html)
+- [Guias em portugues](https://dpfcarlos.github.io/ai-bookmark-organizer/guides/pt/organizar-favoritos-com-ia.html)
+
+## Project
+- [Web tool](https://dpfcarlos.github.io/ai-bookmark-organizer/)
+- [Source code and README (12 languages)](https://github.com/dpfcarlos/ai-bookmark-organizer)
+- [Agent skill](https://github.com/dpfcarlos/ai-bookmark-organizer/blob/main/skills/organize-bookmarks/SKILL.md)

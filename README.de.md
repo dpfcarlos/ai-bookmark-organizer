@@ -1,18 +1,20 @@
-# Bookmark Organizer (Lesezeichen-Organizer)
+# AI Bookmark Organizer (Lesezeichen-Organizer)
 
 [English](README.md) · [Português](README.pt-BR.md) · [Español](README.es.md) · [Français](README.fr.md) · **Deutsch** · [Italiano](README.it.md) · [Русский](README.ru.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [हिन्दी](README.hi.md) · [العربية](README.ar.md)
 
 Räumen Sie die Lesezeichen Ihres Browsers auf, selbst oder indem Sie eine KI darum bitten.
 
+![AI Bookmark Organizer](docs/screenshot.png)
+
 Das Projekt besteht aus drei Teilen:
 
-- **[Web-Tool](https://dpfcarlos.github.io/bookmark-organizer/)**: eine Seite, die in Ihrem Browser läuft. Exportierte Lesezeichen laden, Duplikate und leere Ordner entfernen, Links nach Website gruppieren, sortieren, verschieben, umbenennen, löschen und eine saubere Datei herunterladen. Nichts wird hochgeladen.
+- **[Web-Tool](https://dpfcarlos.github.io/ai-bookmark-organizer/)**: eine Seite, die in Ihrem Browser läuft. Exportierte Lesezeichen laden, Duplikate und leere Ordner entfernen, Links nach Website gruppieren, sortieren, verschieben, umbenennen, löschen und eine saubere Datei herunterladen. Nichts wird hochgeladen.
 - **MCP-Server**: lässt die KI die Lesezeichen von Chrome, Edge, Brave, Vivaldi, Opera und Chromium direkt auf Ihrem Computer lesen und ändern: auflisten, suchen, Duplikate und tote Links finden, in Ordner umsortieren, exportieren, alles löschen und einen neuen Satz laden, Sicherungen wiederherstellen.
 - **Skill** (`organize-bookmarks`): bringt der KI das sichere Vorgehen bei: zuerst sichern, prüfen, ob der Browser geschlossen ist, Vorschau zeigen und erst nach Ihrer Bestätigung anwenden.
 
 ## 1. Web-Tool (ohne Installation)
 
-Öffnen Sie **https://dpfcarlos.github.io/bookmark-organizer/** (oder laden Sie [`docs/index.html`](docs/index.html) herunter und öffnen Sie die Datei).
+Öffnen Sie **https://dpfcarlos.github.io/ai-bookmark-organizer/** (oder laden Sie [`docs/index.html`](docs/index.html) herunter und öffnen Sie die Datei).
 
 1. **Exportieren** Sie Ihre Lesezeichen: In Chrome, Edge oder Brave `Strg+Umschalt+O` drücken, das Menü ⋮ öffnen und *Lesezeichen exportieren* wählen. In Firefox: `Strg+Umschalt+O` → *Importieren und Sichern* → *Lesezeichen nach HTML exportieren*.
 2. **Organisieren** Sie die Datei auf der Seite. Mehrere Dateien können gleichzeitig geladen werden und werden zusammengeführt.
@@ -27,14 +29,14 @@ Voraussetzung: [Node.js](https://nodejs.org) 18 oder neuer. Der Server läuft **
 ### Claude Code (Plugin: MCP-Server und Skill in einem Schritt)
 
 ```
-/plugin marketplace add dpfcarlos/bookmark-organizer
-/plugin install bookmark-organizer@bookmark-organizer
+/plugin marketplace add dpfcarlos/ai-bookmark-organizer
+/plugin install ai-bookmark-organizer@ai-bookmark-organizer
 ```
 
 Nur der MCP-Server:
 
 ```bash
-claude mcp add bookmark-organizer -- npx -y github:dpfcarlos/bookmark-organizer
+claude mcp add ai-bookmark-organizer -- npx -y github:dpfcarlos/ai-bookmark-organizer
 ```
 
 ### Claude Desktop
@@ -44,9 +46,9 @@ claude mcp add bookmark-organizer -- npx -y github:dpfcarlos/bookmark-organizer
 ```json
 {
   "mcpServers": {
-    "bookmark-organizer": {
+    "ai-bookmark-organizer": {
       "command": "npx",
-      "args": ["-y", "github:dpfcarlos/bookmark-organizer"]
+      "args": ["-y", "github:dpfcarlos/ai-bookmark-organizer"]
     }
   }
 }
@@ -56,7 +58,7 @@ Starten Sie Claude Desktop neu. Für die Skill laden Sie den Ordner [`skills/org
 
 ### Cursor, VS Code, Windsurf und andere MCP-Clients
 
-Verwenden Sie denselben Befehl in den MCP-Einstellungen: `npx -y github:dpfcarlos/bookmark-organizer` (stdio).
+Verwenden Sie denselben Befehl in den MCP-Einstellungen: `npx -y github:dpfcarlos/ai-bookmark-organizer` (stdio).
 
 ### Beispielanfragen
 

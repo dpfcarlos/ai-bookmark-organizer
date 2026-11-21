@@ -1,10 +1,22 @@
 {
-  "name": "bookmark-organizer",
-  "version": "1.0.0",
-  "description": "Lets Claude organize your browser bookmarks: find duplicates and broken links, reorganize into folders, export, wipe and re-import (Chrome, Edge, Brave, Vivaldi, Opera).",
-  "author": { "name": "dpfcarlos", "url": "https://github.com/dpfcarlos" },
-  "homepage": "https://github.com/dpfcarlos/bookmark-organizer",
-  "repository": "https://github.com/dpfcarlos/bookmark-organizer",
+  "name": "ai-bookmark-organizer",
+  "version": "1.1.0",
+  "description": "Lets your AI assistant organize your browser bookmarks: find duplicates and broken links, reorganize into folders, export, wipe and re-import (Chrome, Edge, Brave, Vivaldi, Opera).",
+  "author": {
+    "name": "dpfcarlos",
+    "url": "https://github.com/dpfcarlos"
+  },
+  "homepage": "https://github.com/dpfcarlos/ai-bookmark-organizer",
+  "repository": "https://github.com/dpfcarlos/ai-bookmark-organizer",
   "license": "MIT",
-  "keywords": ["bookmarks", "favorites", "browser", "chrome", "edge"]
+  "keywords": [
+    "bookmarks",
+    "favorites",
+    "browser",
+    "chrome",
+    "edge",
+    "mcp",
+    "ai",
+    "productivity"
+  ]
 }

@@ -14,7 +14,7 @@ import { discoverProfiles, resolveProfile, isBrowserRunning } from './browsers.j
 import * as cr from './chromium.js';
 import * as ns from './netscape.js';
 
-const server = new McpServer({ name: 'bookmark-organizer', version: '1.0.0' });
+const server = new McpServer({ name: 'ai-bookmark-organizer', version: '1.0.0' });
 
 const profileArg = z
   .string()
@@ -253,7 +253,7 @@ server.registerTool(
         const ctrl = new AbortController();
         const timer = setTimeout(() => ctrl.abort(), timeout_ms);
         try {
-          return await fetch(b.url, { method, redirect: 'follow', signal: ctrl.signal, headers: { 'user-agent': 'Mozilla/5.0 (bookmark-organizer link checker)' } });
+          return await fetch(b.url, { method, redirect: 'follow', signal: ctrl.signal, headers: { 'user-agent': 'Mozilla/5.0 (ai-bookmark-organizer link checker)' } });
         } finally {
           clearTimeout(timer);
         }

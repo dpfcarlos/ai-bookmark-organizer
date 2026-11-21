@@ -1,18 +1,20 @@
-# Bookmark Organizer（书签整理器）
+# AI Bookmark Organizer（书签整理器）
 
 [English](README.md) · [Português](README.pt-BR.md) · [Español](README.es.md) · [Français](README.fr.md) · [Deutsch](README.de.md) · [Italiano](README.it.md) · [Русский](README.ru.md) · **简体中文** · [日本語](README.ja.md) · [한국어](README.ko.md) · [हिन्दी](README.hi.md) · [العربية](README.ar.md)
 
 整理浏览器书签：可以自己动手，也可以让 AI 帮你完成。
 
+![AI Bookmark Organizer](docs/screenshot.png)
+
 项目包含三部分：
 
-- **[网页工具](https://dpfcarlos.github.io/bookmark-organizer/)**：在浏览器中运行的单个页面。载入导出的书签，删除重复项和空文件夹，按网站归类链接，排序、移动、重命名、删除，然后下载整理好的文件。不会上传任何数据。
+- **[网页工具](https://dpfcarlos.github.io/ai-bookmark-organizer/)**：在浏览器中运行的单个页面。载入导出的书签，删除重复项和空文件夹，按网站归类链接，排序、移动、重命名、删除，然后下载整理好的文件。不会上传任何数据。
 - **MCP 服务器**：让 AI 直接在你的电脑上读取和修改 Chrome、Edge、Brave、Vivaldi、Opera 和 Chromium 的书签：列出、搜索、查找重复和失效链接、按文件夹重新整理、导出、全部删除并载入新书签、恢复备份。
 - **Skill**（`organize-bookmarks`）：教 AI 安全地操作：先备份，确认浏览器已关闭，展示预览，只有在你确认后才执行。
 
 ## 1. 网页工具（无需安装）
 
-打开 **https://dpfcarlos.github.io/bookmark-organizer/**（或下载 [`docs/index.html`](docs/index.html) 后直接打开）。
+打开 **https://dpfcarlos.github.io/ai-bookmark-organizer/**（或下载 [`docs/index.html`](docs/index.html) 后直接打开）。
 
 1. **导出**书签：在 Chrome、Edge 或 Brave 中按 `Ctrl+Shift+O`，打开 ⋮ 菜单并选择*导出书签*。Firefox：`Ctrl+Shift+O` → *导入和备份* → *导出书签到 HTML*。
 2. 在页面中**整理**文件。可以一次载入多个文件，它们会被合并。
@@ -27,14 +29,14 @@
 ### Claude Code（插件：一步安装 MCP 服务器和 skill）
 
 ```
-/plugin marketplace add dpfcarlos/bookmark-organizer
-/plugin install bookmark-organizer@bookmark-organizer
+/plugin marketplace add dpfcarlos/ai-bookmark-organizer
+/plugin install ai-bookmark-organizer@ai-bookmark-organizer
 ```
 
 仅安装 MCP 服务器：
 
 ```bash
-claude mcp add bookmark-organizer -- npx -y github:dpfcarlos/bookmark-organizer
+claude mcp add ai-bookmark-organizer -- npx -y github:dpfcarlos/ai-bookmark-organizer
 ```
 
 ### Claude Desktop
@@ -44,9 +46,9 @@ claude mcp add bookmark-organizer -- npx -y github:dpfcarlos/bookmark-organizer
 ```json
 {
   "mcpServers": {
-    "bookmark-organizer": {
+    "ai-bookmark-organizer": {
       "command": "npx",
-      "args": ["-y", "github:dpfcarlos/bookmark-organizer"]
+      "args": ["-y", "github:dpfcarlos/ai-bookmark-organizer"]
     }
   }
 }
@@ -56,7 +58,7 @@ claude mcp add bookmark-organizer -- npx -y github:dpfcarlos/bookmark-organizer
 
 ### Cursor、VS Code、Windsurf 及其他 MCP 客户端
 
-在程序的 MCP 设置中使用同一命令：`npx -y github:dpfcarlos/bookmark-organizer`（stdio）。
+在程序的 MCP 设置中使用同一命令：`npx -y github:dpfcarlos/ai-bookmark-organizer`（stdio）。
 
 ### 示例请求
 

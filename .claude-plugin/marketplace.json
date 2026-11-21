@@ -1,9 +1,9 @@
 {
-  "name": "bookmark-organizer",
+  "name": "ai-bookmark-organizer",
   "owner": { "name": "dpfcarlos" },
   "plugins": [
     {
-      "name": "bookmark-organizer",
+      "name": "ai-bookmark-organizer",
       "source": "./",
       "description": "Organize your browser bookmarks with Claude: MCP server + skill."
     }

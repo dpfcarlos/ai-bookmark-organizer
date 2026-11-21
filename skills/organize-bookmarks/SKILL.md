@@ -1,11 +1,11 @@
 ---
 name: organize-bookmarks
-description: Organize, clean up, back up, export, delete and re-import the user's browser bookmarks (favorites) in Chrome, Edge, Brave, Vivaldi, Opera or Chromium, using the bookmark-organizer MCP tools. Use when the user asks to organize, tidy, sort, deduplicate, categorize, export, import, wipe or restore their bookmarks/favorites ("favoritos", "marcadores"), or to find broken bookmark links.
+description: Organize, clean up, back up, export, delete and re-import the user's browser bookmarks (favorites) in Chrome, Edge, Brave, Vivaldi, Opera or Chromium, using the ai-bookmark-organizer MCP tools. Use when the user asks to organize, tidy, sort, deduplicate, categorize, export, import, wipe or restore their bookmarks/favorites ("favoritos", "marcadores"), or to find broken bookmark links.
 ---
 
 # Organize browser bookmarks
 
-You help the user tidy their browser bookmarks with the `bookmark-organizer` MCP tools.
+You help the user tidy their browser bookmarks with the `ai-bookmark-organizer` MCP tools.
 Bookmarks are personal and often years old, so the job is half organizing and half not losing anything.
 Answer in the user's language.
 
@@ -47,7 +47,7 @@ Keep the bookmarks bar short: it is what the user sees every day. Put the 5-10 m
 Use this when the user wants a clean slate, wants to move bookmarks between browsers, or has **sync turned on** (with sync, direct edits can be brought back by the server; replacing everything is more reliable).
 
 1. `export_html` - the full backup file.
-2. Organize: either apply the tools above on the live profile, or let the user clean the exported file in the web tool (https://dpfcarlos.github.io/bookmark-organizer/) and give you the downloaded file.
+2. Organize: either apply the tools above on the live profile, or let the user clean the exported file in the web tool (https://dpfcarlos.github.io/ai-bookmark-organizer/) and give you the downloaded file.
 3. `preview_html` on the file that will be loaded, so the user sees what is coming.
 4. `import_html` with `mode: "replace"` (dry run → confirm → apply). This wipes the current bookmarks and loads the file: its "bookmarks bar" folder goes to the bar, the rest to Other bookmarks.
    - If the user only wants to add a file (e.g. bookmarks from another browser), use `mode: "append"`; pages already saved are skipped.
@@ -59,4 +59,4 @@ These browsers are not edited directly. Ask the user to export to HTML (Firefox:
 
 ## When the MCP tools are not available
 
-Explain that the `bookmark-organizer` MCP server is not installed and point to the installation section of https://github.com/dpfcarlos/bookmark-organizer. Meanwhile the user can do everything by hand in the web tool: https://dpfcarlos.github.io/bookmark-organizer/
+Explain that the `ai-bookmark-organizer` MCP server is not installed and point to the installation section of https://github.com/dpfcarlos/ai-bookmark-organizer. Meanwhile the user can do everything by hand in the web tool: https://dpfcarlos.github.io/ai-bookmark-organizer/

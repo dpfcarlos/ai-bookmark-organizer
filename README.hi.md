@@ -1,18 +1,20 @@
-# Bookmark Organizer (बुकमार्क ऑर्गनाइज़र)
+# AI Bookmark Organizer (बुकमार्क ऑर्गनाइज़र)
 
 [English](README.md) · [Português](README.pt-BR.md) · [Español](README.es.md) · [Français](README.fr.md) · [Deutsch](README.de.md) · [Italiano](README.it.md) · [Русский](README.ru.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · **हिन्दी** · [العربية](README.ar.md)
 
 अपने ब्राउज़र के बुकमार्क खुद व्यवस्थित करें, या यह काम किसी AI से करवाएँ।
 
+![AI Bookmark Organizer](docs/screenshot.png)
+
 इस प्रोजेक्ट के तीन हिस्से हैं:
 
-- **[वेब टूल](https://dpfcarlos.github.io/bookmark-organizer/)**: एक पेज जो आपके ब्राउज़र में ही चलता है। एक्सपोर्ट किए गए बुकमार्क लोड करें, डुप्लिकेट और खाली फ़ोल्डर हटाएँ, लिंक को साइट के अनुसार समूहित करें, क्रम से लगाएँ, खिसकाएँ, नाम बदलें, हटाएँ और साफ़ फ़ाइल डाउनलोड करें। कुछ भी अपलोड नहीं होता।
+- **[वेब टूल](https://dpfcarlos.github.io/ai-bookmark-organizer/)**: एक पेज जो आपके ब्राउज़र में ही चलता है। एक्सपोर्ट किए गए बुकमार्क लोड करें, डुप्लिकेट और खाली फ़ोल्डर हटाएँ, लिंक को साइट के अनुसार समूहित करें, क्रम से लगाएँ, खिसकाएँ, नाम बदलें, हटाएँ और साफ़ फ़ाइल डाउनलोड करें। कुछ भी अपलोड नहीं होता।
 - **MCP सर्वर**: AI को आपके कंप्यूटर पर Chrome, Edge, Brave, Vivaldi, Opera और Chromium के बुकमार्क सीधे पढ़ने और बदलने देता है: सूची बनाना, खोजना, डुप्लिकेट और टूटे लिंक ढूँढना, फ़ोल्डरों में व्यवस्थित करना, एक्सपोर्ट करना, सब हटाकर नया सेट लोड करना और बैकअप बहाल करना।
 - **Skill** (`organize-bookmarks`): AI को सुरक्षित तरीका सिखाता है: पहले बैकअप, फिर जाँच कि ब्राउज़र बंद है, फिर पूर्वावलोकन, और आपकी पुष्टि के बाद ही बदलाव।
 
 ## 1. वेब टूल (कुछ इंस्टॉल नहीं करना)
 
-**https://dpfcarlos.github.io/bookmark-organizer/** खोलें (या [`docs/index.html`](docs/index.html) डाउनलोड करके खोलें)।
+**https://dpfcarlos.github.io/ai-bookmark-organizer/** खोलें (या [`docs/index.html`](docs/index.html) डाउनलोड करके खोलें)।
 
 1. अपने बुकमार्क **एक्सपोर्ट** करें: Chrome, Edge या Brave में `Ctrl+Shift+O` दबाएँ, ⋮ मेन्यू खोलें और *बुकमार्क एक्सपोर्ट करें* चुनें। Firefox में: `Ctrl+Shift+O` → *Import and Backup* → *Export Bookmarks to HTML*।
 2. पेज में फ़ाइल को **व्यवस्थित** करें। एक साथ कई फ़ाइलें लोड की जा सकती हैं, वे आपस में जुड़ जाती हैं।
@@ -27,14 +29,14 @@
 ### Claude Code (प्लगइन: MCP सर्वर और skill एक ही कदम में)
 
 ```
-/plugin marketplace add dpfcarlos/bookmark-organizer
-/plugin install bookmark-organizer@bookmark-organizer
+/plugin marketplace add dpfcarlos/ai-bookmark-organizer
+/plugin install ai-bookmark-organizer@ai-bookmark-organizer
 ```
 
 केवल MCP सर्वर:
 
 ```bash
-claude mcp add bookmark-organizer -- npx -y github:dpfcarlos/bookmark-organizer
+claude mcp add ai-bookmark-organizer -- npx -y github:dpfcarlos/ai-bookmark-organizer
 ```
 
 ### Claude Desktop
@@ -44,9 +46,9 @@ claude mcp add bookmark-organizer -- npx -y github:dpfcarlos/bookmark-organizer
 ```json
 {
   "mcpServers": {
-    "bookmark-organizer": {
+    "ai-bookmark-organizer": {
       "command": "npx",
-      "args": ["-y", "github:dpfcarlos/bookmark-organizer"]
+      "args": ["-y", "github:dpfcarlos/ai-bookmark-organizer"]
     }
   }
 }
@@ -56,7 +58,7 @@ Claude Desktop को फिर से शुरू करें। skill जो
 
 ### Cursor, VS Code, Windsurf और अन्य MCP क्लाइंट
 
-प्रोग्राम की MCP सेटिंग में यही कमांड इस्तेमाल करें: `npx -y github:dpfcarlos/bookmark-organizer` (stdio)।
+प्रोग्राम की MCP सेटिंग में यही कमांड इस्तेमाल करें: `npx -y github:dpfcarlos/ai-bookmark-organizer` (stdio)।
 
 ### अनुरोध के उदाहरण
 
